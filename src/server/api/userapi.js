@@ -11,4 +11,10 @@ router.use('/searchUser', function(req, res) {
     })
 })
 
+router.use('/checkUserExistence', function (req, res) {
+    res.json({
+        code: 0
+    })
+    
+})
 module.exports = router

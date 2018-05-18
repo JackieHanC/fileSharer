@@ -2,10 +2,13 @@
   <div class="ui card">
       <div class="content">  
         <div class="ui form">
+            <div class="ui field" align="center">
+                <h1>fileSharer</h1>
+            </div>
             <div class="ui field">
                 <div class="ui icon input"
                      id="username" 
-                     data-content="邮箱已注册">
+                     :data-content="usernameError">
                     <input 
                         type="text" 
                         placeholder="注册邮箱" 
@@ -14,8 +17,9 @@
                 </div>
             </div>
             <div class="ui field">
-                <div class="ui labeled input" id="password">
+                <div class="ui icon input" id="password" :data-content="passwordError">
                     <input class="ui input" type="password" placeholder="密码" v-model="password"/>
+                    <i :class="pwdIcon"></i>
                 </div>
             </div>
             <div class="ui field">
@@ -39,9 +43,6 @@
             </div>
         </div>
       </div>
-      <div class="extracontent">
-          <p>{{outtext}}</p>
-      </div>
     </div>
 </template>
 
@@ -50,15 +51,16 @@ export default {
     data() {
         return {
             usernameIcon: "",
+            pwdIcon: "",
             pwd2Icon:"",
             username: "",
             password: "",
             password2: "",
-            outtext: "",
-            usernameTip: "",
             codeButton: "ui primary button",
             buttonValue: "发送",
             cnt: 50,
+            usernameError: "",
+            passwordError: "",
       }
     },
     methods: {
@@ -104,30 +106,63 @@ export default {
                 return
             }
             setTimeout(this.sendCode, 1000);
-
-
-            // for (var i = 0; i <= 50;i++) {
-            //     setTimeout(() => {
-            //         this.buttonValue = (50-i) + "(s)重新发送"
-            //     }, i*1000);
-            // }
-            // setTimeout(() => {
-            //     this.buttonValue = "发送"
-            //     this.sendCode = "ui primary button"
-            // }, 5100);
             
         }
     },
-     watch: {
+    watch: {
          username: function () {
-             this.outtext = this.username.length
-             if (this.username.length > 3) {
-                this.usernameIcon = "green check icon"
-                $('#username').popup('destroy')
-             }else {
+            //  this.outtext = this.username.length
+            //  if (this.username.length > 3) {
+            //     this.usernameIcon = "green check icon"
+            //     $('#username').popup('destroy')
+            //  }else {
+            //     this.usernameIcon = "red times icon"
+            //     $('#username').popup()
+            //  }
+            var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$")
+            if (this.username === "") {
+                this.usernameError = "邮箱不能为空"
                 this.usernameIcon = "red times icon"
                 $('#username').popup()
-             }
+                return
+            } else if (!reg.test(this.username)) {
+                this.usernameError = "请输入正确的邮箱格式"
+                this.usernameIcon = "red times icon"
+                $('#username').popup()
+                return
+            } else {
+                // this.usernameIcon = "green check icon"
+                // $('#username').popup('destroy')
+                // return
+                let self = this
+                this.$ajax({
+                    method: "post",
+                    url: "api/checkUserExistence",
+                    data: {
+                        username: username
+                    },
+                    timeout: 3000
+                }).then(function (response) {
+                    if (response['code'] === 1) {
+                        self.usernameError = "邮箱已注册"
+                        self.usernameIcon = "red time icon"
+                        $('#username').popup()
+                    } else {
+                        $('#username').popup('destroy')
+                        self.usernameIcon = "green check icon"
+                    }
+                })
+            }
+        },
+        password: function() {
+            if (this.password.length < 8) {
+                this.passwordError = "密码长度应不小于8"
+                this.pwdIcon = "red times icon"
+                $('#password').popup()
+            }else {
+                this.pwdIcon = "green check icon"
+                $('#password').popup('destroy')
+            }
         },
         password2: function () {
             if (this.password !== this.password2) {
