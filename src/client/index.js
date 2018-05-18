@@ -5,10 +5,13 @@ import store from './store/store'
 
 import axios from 'axios'
 import semantic from 'semantic-ui-css/semantic.min.css'
-
+import 'semantic-ui/dist/semantic.js'
+import VTooltip from 'v-tooltip'
+import $ from 'jquery'
 Vue.config.debug = true
 Vue.config.productionTip = false
 Vue.prototype.$axios = axios
+Vue.use(VTooltip)
 
 new Vue({
   el: '#app',
