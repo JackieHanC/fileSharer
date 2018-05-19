@@ -30,7 +30,10 @@
             </div>
             <div class="ui field">
                 <div class="fluid ui action input">
-                    <input type="text" placeholder="验证码">
+                    <div class="fluid ui icon input">
+                        <input type="text" placeholder="验证码" v-model="icode">
+                        <i :class="icodeIcon"></i>
+                    </div>
                     <button id="sendButton" 
                             :class="codeButton" 
                             @click="sendCode">
@@ -52,7 +55,8 @@ export default {
         return {
             usernameIcon: "",
             pwdIcon: "",
-            pwd2Icon:"",
+            pwd2Icon: "",
+            icodeIcon: "",
             username: "",
             password: "",
             password2: "",
@@ -61,6 +65,8 @@ export default {
             cnt: 50,
             usernameError: "",
             passwordError: "",
+            icode:"",
+            mailCode: "",
       }
     },
     methods: {
@@ -96,9 +102,22 @@ export default {
         },
         sendCode: function() {
             this.codeButton = "ui disabled button"
+            if (this.cnt == 50) {
+                var self = this
+                this.$ajax({
+                    method: 'post',
+                    url: 'api/sendMailCode',
+                    data: {
+                        mail: this.username
+                    }
+                }).then(function (response) {
+                    self.mailCode = response['codeSent']
+                })
+            }
             this.cnt--
             this.buttonValue = this.cnt + "(s)重新发送"
-            console.log(this.cnt)
+            // console.log(this.cnt)
+
             if (this.cnt === 0){
                 this.codeButton = "ui primary button"
                 this.cnt = 50
@@ -110,7 +129,7 @@ export default {
         }
     },
     watch: {
-         username: function () {
+        username: function () {
             //  this.outtext = this.username.length
             //  if (this.username.length > 3) {
             //     this.usernameIcon = "green check icon"
@@ -147,9 +166,11 @@ export default {
                         self.usernameError = "邮箱已注册"
                         self.usernameIcon = "red time icon"
                         $('#username').popup()
-                    } else {
+                    } else if (response['code'] === 0){
                         $('#username').popup('destroy')
                         self.usernameIcon = "green check icon"
+                    } else {
+                        console.log("wrong return code")
                     }
                 })
             }
@@ -171,6 +192,13 @@ export default {
             }else {
                 this.pwd2Icon = "green check icon"
                 $('#password2').popup('destroy')
+            }
+        },
+        icode: function () {
+            if (this.icode !== this.mailCode) {
+                this.icodeIcon = "red times icon"
+            } else {
+                this.icodeIcon = "green check icon"
             }
         }
     }
