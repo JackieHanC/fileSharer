@@ -18,6 +18,7 @@ router.use('/checkUserExistence', function (req, res) {
     
 })
 
+
 // 产生四位随机数，字母与数字的混合
 function generate_code() 
 {
@@ -85,6 +86,7 @@ router.use('/sendMailCode', function(req, res){
         codeSent: sendcode,
         code: email_wrong
     })
+
 
 })
 module.exports = router
