@@ -1,3 +1,6 @@
+// the ';' in this file should not be used in json
+
+
 // name: /checkUserExistence
 // 检查用户名是否存在
 send: {
@@ -13,5 +16,20 @@ send: {
     mail: '...'
 }
 receive: {
+    code: 0 ;// 0 for success 1 for error
     codeSent: '...' //the identification code sent to the mail  
+}
+
+// name: /signUp
+// 注册函数
+
+send: {
+    username: '...';
+    pwd: '...' // MD5 of pwd , length: 32
+}
+
+receive: {
+    code: 0; // 0 for success, 1 for error
+    userID: xx // ID for this user, for cookie
+    // can add new data if needed
 }
