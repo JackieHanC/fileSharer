@@ -17,4 +17,10 @@ router.use('/checkUserExistence', function (req, res) {
     })
     
 })
+
+router.use('/sendMailCode', function (req, res) {
+    res.json({
+        'codeSent': "naive"
+    })
+})
 module.exports = router
