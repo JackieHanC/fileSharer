@@ -158,7 +158,7 @@ export default {
                     method: "post",
                     url: "api/checkUserExistence",
                     data: {
-                        username: username
+                        username: this.username
                     },
                     timeout: 3000
                 }).then(function (response) {
