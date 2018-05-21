@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="ui field">
-                <button class="fluid ui primary button" @click="sub" >注册</button>
+                <button :class="signUpBtn" @click="sub" >注册</button>
             </div>
         </div>
       </div>
@@ -67,36 +67,31 @@ export default {
             passwordError: "",
             icode:"",
             mailCode: "",
+            signUpBtn: "fluid ui disabled button"
       }
     },
     methods: {
         sub: function () {
             var name = this.username
             var pwd = this.password
-            if (pwd !== this.password2) {
-                this.outtext
-            }
+            
             var self = this
+            var MD5 = require('md5.js')
+            console.log(new MD5().update(pwd).digest('hex'));
+            
             if (name != '' && pwd != '') {
                 this.$ajax({
                     method: 'get',
-                    url: 'api/searchUser',
+                    url: 'api/signUp',
                     data: {
                         username: name,
-                        pwd: pwd
+                        pwd: new MD5().update(pwd).digest('hex')
                     },
                     timeout: 3000
                 }).then(function(response) {
-                    var i, flag
-                    for (i in response.data) {
-                        if (name === response.data[i].userName && pwd === response.data[i].pwd &&
-                            name != '' && pwd != '')
-                            flag = 'allright'
-                    }
+                    // TODO. cookie, jump over
 
-                    if (flag === 'allright') {
-                        self.outtext = 'sucess'
-                    }
+                    
                 })
             }
         },
@@ -132,18 +127,20 @@ export default {
             }
             setTimeout(this.sendCode, 1000);
             
+        },
+        canSignUp: function () {
+            var rightIcon = "green check icon"
+            if (this.usernameIcon === rightIcon &&
+                this.pwdIcon === rightIcon &&
+                this.pwd2Icon === rightIcon &&
+                this.icodeIcon === rightIcon)
+                return true;
+            else 
+                return false;
         }
     },
     watch: {
         username: function () {
-            //  this.outtext = this.username.length
-            //  if (this.username.length > 3) {
-            //     this.usernameIcon = "green check icon"
-            //     $('#username').popup('destroy')
-            //  }else {
-            //     this.usernameIcon = "red times icon"
-            //     $('#username').popup()
-            //  }
             var reg = new RegExp("^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$")
             if (this.username === "") {
                 this.usernameError = "邮箱不能为空"
@@ -156,9 +153,6 @@ export default {
                 $('#username').popup()
                 return
             } else {
-                // this.usernameIcon = "green check icon"
-                // $('#username').popup('destroy')
-                // return
                 let self = this
                 this.$ajax({
                     method: "post",
@@ -180,6 +174,9 @@ export default {
                     }
                 })
             }
+            if (this.canSignUp()) {
+                this.signUpBtn = "fluid ui primary button"
+            }
         },
         password: function() {
             if (this.password.length < 8) {
@@ -190,6 +187,9 @@ export default {
                 this.pwdIcon = "green check icon"
                 $('#password').popup('destroy')
             }
+            if (this.canSignUp()) {
+                this.signUpBtn = "fluid ui primary button"
+            }
         },
         password2: function () {
             if (this.password !== this.password2) {
@@ -199,12 +199,18 @@ export default {
                 this.pwd2Icon = "green check icon"
                 $('#password2').popup('destroy')
             }
+            if (this.canSignUp()) {
+                this.signUpBtn = "fluid ui primary button"
+            }
         },
         icode: function () {
             if (this.icode !== this.mailCode) {
                 this.icodeIcon = "red times icon"
             } else {
                 this.icodeIcon = "green check icon"
+            }
+            if (this.canSignUp()) {
+                this.signUpBtn = "fluid ui primary button"
             }
         }
     }
