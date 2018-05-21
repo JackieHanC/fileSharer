@@ -11,9 +11,41 @@ router.use('/searchUser', function(req, res) {
     })
 })
 
+// 检查用户名是否存在
 router.use('/checkUserExistence', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+	var is_exist = 0;
+
+	var user = '' + req.body.username;		// 用户账号
+	var myquery = {"name": user};
+
+	//console.log('\n\n\n' + myquery['name']);
+	//console.log(typeof(myquery['name'] + '\n\n\n\n\n'));
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+
+	    // 查询数据
+	    dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
+	        if (err) 
+	        	throw err;
+	        // 展示查询结果
+	        console.log("query result：" + result.length);
+	        if(result.length == 0)
+	        	is_exist = 0;
+	        else
+	        	is_exist = 1;
+	        db.close();
+	    });
+	});
+
     res.json({
-        code: 0
+        code: is_exist
     })
     
 })
@@ -87,4 +119,5 @@ router.use('/sendMailCode', function(req, res){
     })
 
 })
+
 module.exports = router
