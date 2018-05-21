@@ -102,16 +102,22 @@ export default {
         },
         sendCode: function() {
             this.codeButton = "ui disabled button"
-            if (this.cnt == 50) {
+            if (this.cnt === 50) {
                 var self = this
                 this.$ajax({
                     method: 'post',
                     url: 'api/sendMailCode',
                     data: {
                         mail: this.username
-                    }
+                    },
+                    timeout: 3000
                 }).then(function (response) {
-                    self.mailCode = response['codeSent']
+                    console.log(response);
+                    
+                    self.mailCode = response.data['codeSent']
+                    console.log(response.data['codeSent']);
+                    
+                    console.log(self.mailCode)
                 })
             }
             this.cnt--
@@ -162,11 +168,11 @@ export default {
                     },
                     timeout: 3000
                 }).then(function (response) {
-                    if (response['code'] === 1) {
+                    if (response.data['code'] === 1) {
                         self.usernameError = "邮箱已注册"
                         self.usernameIcon = "red time icon"
                         $('#username').popup()
-                    } else if (response['code'] === 0){
+                    } else if (response.data['code'] === 0){
                         $('#username').popup('destroy')
                         self.usernameIcon = "green check icon"
                     } else {
