@@ -2,54 +2,6 @@ var express = require('express')
 
 var router = express.Router()
 
-router.use('/searchUser', function(req, res) {
-    res.json({
-        data: {
-            userName: '123',
-            pwd: '111'
-        }
-    })
-})
-
-// 检查用户名是否存在
-router.use('/checkUserExistence', function (req, res) {
-	var MongoClient = require('mongodb').MongoClient;
-	var url = "mongodb://localhost:27017/filesharer";
-	var is_exist = 0;
-
-	var user = '' + req.body.username;		// 用户账号
-	var myquery = {"name": user};
-
-	//console.log('\n\n\n' + myquery['name']);
-	//console.log(typeof(myquery['name'] + '\n\n\n\n\n'));
-
-	// 连接数据库
-	MongoClient.connect(url, function (err, db) {
-	    if (err) throw err;
-	    console.log('数据库已连接');
-	    var dbo = db.db("filesharer");
-
-
-	    // 查询数据
-	    dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
-	        if (err) 
-	        	throw err;
-	        // 展示查询结果
-	        console.log("query result：" + result.length);
-	        if(result.length == 0)
-	        	is_exist = 0;
-	        else
-	        	is_exist = 1;
-	        db.close();
-	    });
-	});
-
-    res.json({
-        code: is_exist
-    })
-    
-})
-
 
 // 产生四位随机数，字母与数字的混合
 function generate_code() 
@@ -65,6 +17,45 @@ function generate_code()
 	}
 	return ecode;
 }
+
+
+// 检查用户名是否存在
+router.use('/checkUserExistence', function(req,res){
+
+    var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+    var is_exist = 0;
+    
+	var user = '' + req.body.username;		// 用户账号
+	var myquery = {"name": user};
+
+	//console.log('\n\n\n' + myquery['name']);
+	//console.log(typeof(myquery['name'] + '\n\n\n\n\n'));
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+	    // 查询数据
+	    dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
+	        if (err) 
+	        	throw err;
+	        // 展示查询结果
+	        console.log("query result：" + result.length);
+	        if(result.length == 0)
+	        	is_exist = 0;
+	        else
+	        	is_exist = 1;
+	        db.close();
+	    });
+	});
+    res.json({
+        code: is_exist
+    })
+})
+
 
 // 将验证码发送到用户邮箱
 router.use('/sendMailCode', function(req, res){
@@ -120,6 +111,88 @@ router.use('/sendMailCode', function(req, res){
     })
 
 
+})
+
+
+//检查用户情况，是否存在，密码是否正确 
+//向前端返回code：0表示用户不存在,1表示密码不正确，-1表示正常
+router.use('/searchUser', function(req, res) {
+
+    console.log("检查用户情况，是否存在，密码是否正确");
+    var search_result = -1;
+
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/filesharer";
+
+    var user = '' + req.body.username;		// 用户账号
+    var pwd = '' + req.body.password;       // 用户密码
+    var myquery = {"name": user};           
+        
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        console.log('数据库已连接');
+        var dbo = db.db("filesharer");
+        // 查询数据
+        dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
+            if (err) throw err;
+            if(result.length == 0){                 //用户不存在
+                console.log("该用户不存在");
+                search_result = 0;
+            }
+            else if(result[0]["password"]!=pwd){    //密码不正确
+                console.log("密码不正确");
+                search_result = 1;
+            }
+            db.close();
+        });
+    
+    });
+
+    res.json({
+        code:search_result
+    })
+})
+
+//用户注册处理
+//向前端返回code:0表示成功，1表示失败
+router.use('/signUp', function(req, res) {
+
+    console.log("用户注册处理");
+    var is_successful_signup = 1;
+
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/filesharer";
+
+    var user = '' + req.body.username;		// 用户账号
+    var pwd = '' + req.body.password;       // 用户密码
+
+    var myquery = {"name": user};           
+    var Insert_data = {"name": user,"password":pwd};
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+	    console.log('数据库已连接');
+        var dbo = db.db("filesharer");
+        dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
+            if (err) throw err;
+            if(result.length > 0){                 //用户已存在
+                console.log("该用户已存在");
+                is_successful_signup = 1;
+            }else{
+                dbo.collection("account").insertOne(Insert_data, function(err, res) {
+                    if (err) throw err;
+                    console.log("account 文档插入成功");
+                    is_successful_signup = 0;
+                });
+            }
+            db.close();
+        });
+    });
+	
+    res.json({
+        code:is_successful_signup
+    })
 })
 
 module.exports = router
