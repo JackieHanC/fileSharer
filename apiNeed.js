@@ -1,7 +1,7 @@
 // name: /checkUserExistence
 // 检查用户名是否存在
 send: {
-    username: '...'
+    username: '...'		// 形式为字符串，比如  '715811763@pku.edu.cn'
 }
 receive: {
     code: 0 // 1 for exist, 0 for not
@@ -13,5 +13,6 @@ send: {
     mail: '...'
 }
 receive: {
-    codeSent: '...' //the identification code sent to the mail  
+    codeSent: '...', //the identification code sent to the mail  
+    code: 0 or 1		// 0:success  1:wrong
 }
