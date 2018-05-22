@@ -17,7 +17,7 @@ var router = new Router({
     routes: [
         { name: 'hello', path: '/hello', component: Hello },
         { name: 'login', path: '/login', component: login },
-        { name: 'login', path: '/', component: home }
+        { name: 'home', path: '/', component: home }
     ]
 })
 
