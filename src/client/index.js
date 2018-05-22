@@ -7,6 +7,7 @@ import axios from 'axios'
 import semantic from 'semantic-ui-css/semantic.min.css'
 import 'semantic-ui/dist/semantic.js'
 // import VTooltip from 'v-tooltip'
+import './static/cookie'
 import $ from 'jquery'
 Vue.config.debug = true
 Vue.config.productionTip = false

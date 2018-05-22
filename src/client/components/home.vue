@@ -2,7 +2,7 @@
     <div class="ui grid container">
         
         <div class="ui fixed borderless fluid primary menu">
-            <a class="active item" >FileSharer</a>
+            <a class="item" >FileSharer</a>
             <div class="item">
                     <div class="ui icon input" id = "searchinfo">
                         <input type="text" placeholder="搜索...">
@@ -64,29 +64,29 @@
         methods: {
             login: function(){
                 let self = this
-                    this.$ajax({
-                        method: "post",
-                        url: "api/searchUser",
-                        data: {
-                            username: username,
-                            password: password
-                        },
+                this.$ajax({
+                    method: "post",
+                    url: "api/searchUser",
+                    data: {
+                        username: this.username,
+                        password: this.password
+                    },
+                    
+                }).then(function (response) {
+                    if(response.data['code'] === 0){
+                        self.usernameError = "用户不存在"
+                        self.usernameIcon = "red time icon"
+                        $('#username').popup()
+                    }else if(response.data['code'] === 1){
+                        self.passwordError = "密码错误"
+                        self.passwordIcon = "red time icon"
+                        $('#password').popup()   
+                    }else{
                         
-                    }).then(function (response) {
-                        if(response.data['code'] === 0){
-                            self.usernameError = "用户不存在"
-                            self.usernameIcon = "red time icon"
-                            $('#username').popup()
-                        }else if(response.data['code'] === 1){
-                            self.passwordError = "密码错误"
-                            self.passwordIcon = "red time icon"
-                            $('#password').popup()   
-                        }else{
-                            
-                        }
+                    }
 
-                        
-                    })
+                    
+                })
             },
             register: function(){
                 this.$router.push({path: '/login'});
