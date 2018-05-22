@@ -81,7 +81,7 @@ export default {
             
             if (name != '' && pwd != '') {
                 this.$ajax({
-                    method: 'get',
+                    method: 'post',
                     url: 'api/signUp',
                     data: {
                         username: name,

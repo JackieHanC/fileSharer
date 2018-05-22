@@ -2,13 +2,10 @@ var express = require('express')
 
 var router = express.Router()
 
-router.use('/searchUser', function(req, res) {
-    res.json({
-        data: {
-            userName: '123',
-            pwd: '111'
-        }
-    })
+router.use('/searchUser', function (req, res){
+	res.json({
+		code: 1
+	})
 })
 
 // 检查用户名是否存在
@@ -17,8 +14,9 @@ router.use('/checkUserExistence', function (req, res) {
 	var url = "mongodb://localhost:27017/filesharer";
 	var is_exist = 0;
 
-	var user = '' + req.body.username;		// 用户账号
-	var myquery = {"name": user};
+	
+	//var user = '' + req.body.username;		// 用户账号
+	var myquery = {"name": req.body.username};
 
 	//console.log('\n\n\n' + myquery['name']);
 	//console.log(typeof(myquery['name'] + '\n\n\n\n\n'));
@@ -89,9 +87,10 @@ router.use('/sendMailCode', function(req, res){
     //邮件发送
     var transporter = nodemailer.createTransport({
         service: 'qq',
+        host:'715811763@qq.com',
         auth: {
             user: '715811763@qq.com',	//邮箱账号
-            pass: 'hkeakrloadcobcha'	//邮箱smtp口令
+            pass: 'zisqyplnoxflbfah'	//邮箱smtp口令
         }
     });
     var mailOptions = {
@@ -120,6 +119,59 @@ router.use('/sendMailCode', function(req, res){
     })
 
 
+})
+
+
+router.use('/signUp', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var return_value;		// 0 for success, else 1
+	var username = req.body.username;		// user name
+	var pwd = req.body.pwd;		// password
+
+	var myquery = {"name": username};
+	var myid = Number(0);
+	var insertobj={};		// 要插入的表项
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+	    
+
+	    // 查询数据
+	    dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
+	        if (err) throw err;
+	        // 展示查询结果
+	        if(result.length == 0){
+	        	return_value = 0;
+
+			    dbo.collection("account"). find({}).sort({"userid" : -1}).limit(1).toArray(function(err, res) { // 返回集合中所有数据
+			        if (err) throw err;
+			        myid = res[0]['userid']+1;
+			        insertobj = {"name": username, "password":pwd, "userid":Number(myid)};
+			    	dbo.collection("account").insertOne(insertobj, function(err, ress) {
+				        if (err) throw err;
+				        console.log("insertobj");
+				        console.log("人员信息插入成功");
+				        db.close();				// !!!!!!!!!!!!这个写在外面就一直 "MongoError: server instance pool was destroyed"
+				    });
+				});
+
+		    }
+	        else{
+	        	return_value = 1;
+	        	console.log("用户名已注册");
+	        }
+	    });
+	});
+
+	res.json({
+        userID: myid,
+        code: return_value
+    })
 })
 
 module.exports = router
