@@ -38,13 +38,12 @@ router.use('/checkUserExistence', function (req, res) {
 	        	is_exist = 0;
 	        else
 	        	is_exist = 1;
+	        res.json({
+        		code: is_exist
+    		})	
 	        db.close();
 	    });
 	});
-
-    res.json({
-        code: is_exist
-    })
     
 })
 
@@ -140,6 +139,10 @@ router.use('/signUp', function (req, res) {
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
 	    
+	    res.json({
+	        userID: 0,
+	        code: 0
+    	})
 
 	    // 查询数据
 	    dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
@@ -152,6 +155,9 @@ router.use('/signUp', function (req, res) {
 			        if (err) throw err;
 			        myid = res[0]['userid']+1;
 			        insertobj = {"name": username, "password":pwd, "userid":Number(myid)};
+
+			        res['userID'] = myid;
+
 			    	dbo.collection("account").insertOne(insertobj, function(err, ress) {
 				        if (err) throw err;
 				        console.log("insertobj");
@@ -165,13 +171,11 @@ router.use('/signUp', function (req, res) {
 	        	return_value = 1;
 	        	console.log("用户名已注册");
 	        }
+
+	        res['code'] = return_value;
+
 	    });
 	});
-
-	res.json({
-        userID: myid,
-        code: return_value
-    })
 })
 
 module.exports = router
