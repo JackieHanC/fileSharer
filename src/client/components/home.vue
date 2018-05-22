@@ -2,14 +2,16 @@
     <div class="ui grid container">
         
         <div class="ui fixed borderless fluid primary menu">
-            <a class="item" >FileSharer</a>
+            <a class="item">
+                <h2>FileSharer</h2>
+            </a>
             <div class="item">
                     <div class="ui icon input" id = "searchinfo">
                         <input type="text" placeholder="搜索...">
                         <i class="search link icon"></i>
                     </div>
             </div>
-            <div class="right menu">
+            <div class="right menu" :style="loginInputs">
                 <div class="item">
                     <div class="ui icon input" id = "username" :data-content="usernameError">
                         <input type="text" placeholder="邮箱" v-model="username"/>
@@ -40,6 +42,16 @@
                 
                 
             </div>
+            <div class="right menu" :style="loginStatus">
+                <div class="ui dropdown item">
+                    {{username}}
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item">item1</a>
+                        <a class="item">item2</a>
+                    </div>
+                </div>
+            </div>
         </div>
         
     </div>
@@ -57,8 +69,8 @@
                 password: "",
                 usernameError: "",
                 passwordError: "",
-                
-                
+                loginInputs: "display:none;",
+                loginStatus: ""
             }
         },
         methods: {
@@ -82,7 +94,9 @@
                         self.passwordIcon = "red time icon"
                         $('#password').popup()   
                     }else{
-                        
+                        self.loginInputs = "display: none";
+                        self.loginStatus = "";
+                        self.$setCookie('username', self.username, 1000*60);
                     }
 
                     
@@ -108,19 +122,29 @@
                 } 
                 
             },
-            password: function() {
-                if (this.password.length < 8) {
-                    this.passwordError = "密码长度应不小于8"
-                    this.pwdIcon = "red times icon"
-                    $('#password').popup()
-                }else {
-                    this.pwdIcon = "green check icon"
-                    $('#password').popup('destroy')
-                }
-                if (this.canSignUp()) {
-                    this.signUpBtn = "fluid ui primary button"
-                }
+            // password: function() {
+            //     if (this.password.length < 8) {
+            //         this.passwordError = "密码长度应不小于8"
+            //         this.pwdIcon = "red times icon"
+            //         $('#password').popup()
+            //     }else {
+            //         this.pwdIcon = "green check icon"
+            //         $('#password').popup('destroy')
+            //     }
+            //     if (this.canSignUp()) {
+            //         this.signUpBtn = "fluid ui primary button"
+            //     }
+            // }
+        },
+        mounted: function () {
+            if (this.$getCookie('username')) {
+                this.loginInputs = 'display: none;';
+                this.loginStatus = '';
+            }else {
+                this.loginStatus = 'display: none;';
+                this.loginInputs = '';
             }
+            $('.ui.dropdown.item').dropdown();
         }
     }
     
