@@ -2,21 +2,33 @@ var express = require('express')
 
 var router = express.Router()
 
-router.use('/searchUser', function (req, res){
-	res.json({
-		code: 1
-	})
-})
+
+
+// 产生四位随机数，字母与数字的混合
+function generate_code() 
+{
+	var ecode = ""
+	var arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+	var min = 0, max = arr.length;
+
+	for(var i=0;i<4;i++)
+	{
+		var range = Math.floor(Math.random() * (max-min)) + min;
+		ecode = ecode + arr[range];
+	}
+	return ecode;
+}
+
+
 
 // 检查用户名是否存在
-router.use('/checkUserExistence', function (req, res) {
-	var MongoClient = require('mongodb').MongoClient;
-	var url = "mongodb://localhost:27017/filesharer";
-	var is_exist = 0;
+router.use('/checkUserExistence', function(req,res){
+
 
 	
 	//var user = '' + req.body.username;		// 用户账号
 	var myquery = {"name": req.body.username};
+
 
 	//console.log('\n\n\n' + myquery['name']);
 	//console.log(typeof(myquery['name'] + '\n\n\n\n\n'));
@@ -26,7 +38,6 @@ router.use('/checkUserExistence', function (req, res) {
 	    if (err) throw err;
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
-
 
 	    // 查询数据
 	    dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
@@ -44,24 +55,9 @@ router.use('/checkUserExistence', function (req, res) {
 	        db.close();
 	    });
 	});
-    
+
 })
 
-
-// 产生四位随机数，字母与数字的混合
-function generate_code() 
-{
-	var ecode = ""
-	var arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-	var min = 0, max = arr.length;
-
-	for(var i=0;i<4;i++)
-	{
-		var range = Math.floor(Math.random() * (max-min)) + min;
-		ecode = ecode + arr[range];
-	}
-	return ecode;
-}
 
 // 将验证码发送到用户邮箱
 router.use('/sendMailCode', function(req, res){
@@ -121,6 +117,46 @@ router.use('/sendMailCode', function(req, res){
 })
 
 
+//检查用户情况，是否存在，密码是否正确 
+//向前端返回code：0表示用户不存在,1表示密码不正确，-1表示正常
+router.use('/searchUser', function(req, res) {
+
+    console.log("检查用户情况，是否存在，密码是否正确");
+    var search_result = -1;
+
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/filesharer";
+
+    var user = '' + req.body.username;		// 用户账号
+    var pwd = '' + req.body.password;       // 用户密码
+    var myquery = {"name": user};           
+        
+    MongoClient.connect(url, function (err, db) {
+        if (err) throw err;
+        console.log('数据库已连接');
+        var dbo = db.db("filesharer");
+        // 查询数据
+        dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
+            if (err) throw err;
+            if(result.length == 0){                 //用户不存在
+                console.log("该用户不存在");
+                search_result = 0;
+            }
+            else if(result[0]["password"]!=pwd){    //密码不正确
+                console.log("密码不正确");
+                search_result = 1;
+            }
+            db.close();
+        });
+    
+    });
+
+    res.json({
+        code:search_result
+    })
+})
+
+
 router.use('/signUp', function (req, res) {
 	var MongoClient = require('mongodb').MongoClient;
 	var url = "mongodb://localhost:27017/filesharer";
@@ -176,6 +212,7 @@ router.use('/signUp', function (req, res) {
 
 	    });
 	});
+
 })
 
 module.exports = router
