@@ -81,7 +81,7 @@ export default {
             
             if (name != '' && pwd != '') {
                 this.$ajax({
-                    method: 'get',
+                    method: 'post',
                     url: 'api/signUp',
                     data: {
                         username: name,
@@ -90,7 +90,8 @@ export default {
                     timeout: 3000
                 }).then(function(response) {
                     // TODO. cookie, jump over
-
+                    self.$setCookie('username', self.username, 1000*60);
+                    self.$router.push({path: '/'});
                     
                 })
             }

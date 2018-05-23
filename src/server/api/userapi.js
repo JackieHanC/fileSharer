@@ -3,6 +3,7 @@ var express = require('express')
 var router = express.Router()
 
 
+
 // 产生四位随机数，字母与数字的混合
 function generate_code() 
 {
@@ -19,15 +20,15 @@ function generate_code()
 }
 
 
+
 // 检查用户名是否存在
 router.use('/checkUserExistence', function(req,res){
 
-    var MongoClient = require('mongodb').MongoClient;
-	var url = "mongodb://localhost:27017/filesharer";
-    var is_exist = 0;
-    
-	var user = '' + req.body.username;		// 用户账号
-	var myquery = {"name": user};
+
+	
+	//var user = '' + req.body.username;		// 用户账号
+	var myquery = {"name": req.body.username};
+
 
 	//console.log('\n\n\n' + myquery['name']);
 	//console.log(typeof(myquery['name'] + '\n\n\n\n\n'));
@@ -48,12 +49,13 @@ router.use('/checkUserExistence', function(req,res){
 	        	is_exist = 0;
 	        else
 	        	is_exist = 1;
+	        res.json({
+        		code: is_exist
+    		})	
 	        db.close();
 	    });
 	});
-    res.json({
-        code: is_exist
-    })
+
 })
 
 
@@ -80,9 +82,10 @@ router.use('/sendMailCode', function(req, res){
     //邮件发送
     var transporter = nodemailer.createTransport({
         service: 'qq',
+        host:'715811763@qq.com',
         auth: {
             user: '715811763@qq.com',	//邮箱账号
-            pass: 'hkeakrloadcobcha'	//邮箱smtp口令
+            pass: 'zisqyplnoxflbfah'	//邮箱smtp口令
         }
     });
     var mailOptions = {
@@ -153,46 +156,63 @@ router.use('/searchUser', function(req, res) {
     })
 })
 
-//用户注册处理
-//向前端返回code:0表示成功，1表示失败
-router.use('/signUp', function(req, res) {
 
-    console.log("用户注册处理");
-    var is_successful_signup = 1;
+router.use('/signUp', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
 
-    var MongoClient = require('mongodb').MongoClient;
-    var url = "mongodb://localhost:27017/filesharer";
+	var return_value;		// 0 for success, else 1
+	var username = req.body.username;		// user name
+	var pwd = req.body.pwd;		// password
 
-    var user = '' + req.body.username;		// 用户账号
-    var pwd = '' + req.body.password;       // 用户密码
-
-    var myquery = {"name": user};           
-    var Insert_data = {"name": user,"password":pwd};
+	var myquery = {"name": username};
+	var myid = Number(0);
+	var insertobj={};		// 要插入的表项
 
 	// 连接数据库
 	MongoClient.connect(url, function (err, db) {
-        if (err) throw err;
+	    if (err) throw err;
 	    console.log('数据库已连接');
-        var dbo = db.db("filesharer");
-        dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
-            if (err) throw err;
-            if(result.length > 0){                 //用户已存在
-                console.log("该用户已存在");
-                is_successful_signup = 1;
-            }else{
-                dbo.collection("account").insertOne(Insert_data, function(err, res) {
-                    if (err) throw err;
-                    console.log("account 文档插入成功");
-                    is_successful_signup = 0;
-                });
-            }
-            db.close();
-        });
-    });
-	
-    res.json({
-        code:is_successful_signup
-    })
+	    var dbo = db.db("filesharer");
+	    
+	    res.json({
+	        userID: 0,
+	        code: 0
+    	})
+
+	    // 查询数据
+	    dbo.collection("account").find(myquery).toArray(function(err, result) { // 返回集合中所有数据
+	        if (err) throw err;
+	        // 展示查询结果
+	        if(result.length == 0){
+	        	return_value = 0;
+
+			    dbo.collection("account"). find({}).sort({"userid" : -1}).limit(1).toArray(function(err, res) { // 返回集合中所有数据
+			        if (err) throw err;
+			        myid = res[0]['userid']+1;
+			        insertobj = {"name": username, "password":pwd, "userid":Number(myid)};
+
+			        res['userID'] = myid;
+
+			    	dbo.collection("account").insertOne(insertobj, function(err, ress) {
+				        if (err) throw err;
+				        console.log("insertobj");
+				        console.log("人员信息插入成功");
+				        db.close();				// !!!!!!!!!!!!这个写在外面就一直 "MongoError: server instance pool was destroyed"
+				    });
+				});
+
+		    }
+	        else{
+	        	return_value = 1;
+	        	console.log("用户名已注册");
+	        }
+
+	        res['code'] = return_value;
+
+	    });
+	});
+
 })
 
 module.exports = router
