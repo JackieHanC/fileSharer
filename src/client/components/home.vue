@@ -2,7 +2,7 @@
     <div class="ui fluid grid">
         
         <div class="ui fixed borderless fluid primary menu">
-            <a class="item">
+            <a class="item" @click="returnHome">
                 <h2>FileSharer</h2>
             </a>
             <div class="item">
@@ -59,12 +59,12 @@
         
         <div class="four wide column"></div>
         <!-- <div class="ui divider"></div> -->
-        <div class="eight wide column">
+        <div class="eight wide column" :style="mainList">
             <!-- <h2>first row</h2>
             <h2>second row</h2> -->
             <!-- <div class="ui card" v-for="it in lst" :key="it.id">{{it.content}}</div> -->
             <!-- <div class="ui relaxed divided list"> -->
-            <div class="ui fluid card" v-for="it in lst" :key="it.id">
+            <div class="ui fluid card" style="cursor: pointer;" v-for="it in dataList" :key="it.id" @click="showPost(it.id)">
                 <div class="content">
                     <h3>{{it.content}}</h3>
                 </div>
@@ -76,6 +76,18 @@
                 </div>
             </div> -->
             <!-- </div> -->
+        </div>
+        <div class="eight wide column" :style="singlePost">
+            <div class="ui fluid card">
+                <div class="content">
+                    <div class="header"> {{thePost.title}}</div>
+                </div>
+                <div class="content">
+                    <!-- <div class=""></div> -->
+                    <p>{{ thePost.content }}</p>
+                </div>
+                <!-- <p>this is the single post</p> -->
+            </div>
         </div>
         <div class="four wide column"></div>
         <div class="ui small modal">
@@ -103,11 +115,14 @@
                 passwordError: "",
                 loginInputs: "display:none;",
                 loginStatus: "",
-                // lst: [].fill.call(new Array(20), {
-                //     id: 1,
-                //     content: "items"
-                // })
-                dataList: []
+                dataList: [],
+                mainList: "",
+                singlePost: "display: none;",
+                thePost: {
+                    title: "the Post",
+                    content: "file in the course: database"
+                }
+                // dataList: []
             }
         },
         methods: {
@@ -147,6 +162,13 @@
                 this.loginStatus = 'display: none;';
                 this.loginInputs = '';
                 this.username = '';
+            },
+            showPost: function (postID) {
+                this.mainList = "display: none;";
+                this.singlePost = "";
+            },
+            returnHome: function() {
+                this.$router.push({ path: '/' })
             }
         },
         watch:{
@@ -163,6 +185,9 @@
                     $('#username').popup()
                     return
                 } 
+                this.usernameError = ""
+                this.usernameIcon = ""
+                $('#username').popup('destroy')
                 
             },
             // password: function() {
@@ -192,16 +217,23 @@
             }
             $('.ui.dropdown.item').dropdown();
 
-            var self = this
-            this.$ajax({
-                url: 'api/getDataList',
-                method: 'post',
-                data : {
-                    id: 0
-                }
-            }).then(function(response) {
-                self.dataList = response.data['dataList']
-            })
+            this.dataList = new Array(20);
+
+            for (var i = 0;i < 20;++i) {
+                this.dataList[i] = new Object();
+                this.dataList[i]['id'] = i;
+                this.dataList[i]['content'] = 'item' + i
+            }
+            // var self = this
+            // this.$ajax({
+            //     url: 'api/getDataList',
+            //     method: 'post',
+            //     data : {
+            //         id: 0
+            //     }
+            // }).then(function(response) {
+            //     self.dataList = response.data['dataList']
+            // })
         },
         components: {
             login
