@@ -36,3 +36,20 @@ receive: {
     // can add new data if needed
 
 }
+
+// name: /getDataList
+// 获取帖子信息
+// 获得从id n开始的20个帖子，不足20就有多少传多少
+send: {
+    idBegin: n;
+}
+
+receive: {
+    dataList: [
+        {
+            id: x, 
+            titile: ''
+        },
+        //...
+    ]
+}

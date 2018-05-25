@@ -96,7 +96,7 @@ function create_studydata(db, dbo, is_delete){
     }
 }
  
-MongoClient.connect(url, function (err, db) {
+MongoClient.connect(url, {usrNewUrlParser: true}, function (err, db) {
     if (err) throw err;
     console.log('数据库已创建');
     var dbo = db.db("filesharer");
