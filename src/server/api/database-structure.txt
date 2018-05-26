@@ -1,0 +1,14 @@
+1. 
+表名：account
+每个表项的组成： “name”:’xxx’, “password”:’xxx’
+含义：用户账户和密码
+
+2.
+表名：bbs
+每个表项的组成： “bbs_id”:xx, “user_name”:’xxx’, “date”:’xxx’, “content”:’xxx’, “comment”:’xxx’, “comment_user”:’xxx’
+含义：ID号，用户名，发帖时间，帖子内容，帖子评论，发评论的用户昵称
+
+3.
+表名：studydata
+每个项的组成： 'file_id': xx, 'file_title':'xxx', course':’xxx’, “major”:’xxx’, “intro”:’xxx’, “path”:’xxx’
+含义：每个文件的全局编号（文件名依据此来定义），发布的标题，年级，专业，简介，存放的路径

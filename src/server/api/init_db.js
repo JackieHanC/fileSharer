@@ -1,4 +1,5 @@
 /*
+
 初始化数据库，数据库使用mongodb, 然后 sudo mongodb开启数据库
 在服务器中，可以使用 tmux 语句，让他一直在后台运行
 example:
@@ -56,7 +57,13 @@ function create_bbs(db, dbo, is_delete){
     });
 
     // 插入一条初始数据
-    var initobj = { "bbs_id":'0', "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'First BBS', "content":'大家好这是第一条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]};
+
+    var initobj = [{ "bbs_id":0, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'First BBS', "content":'大家好这是第1条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
+    "bbs_id":1, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Second BBS', "content":'大家好这是第2条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
+    "bbs_id":2, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Third BBS', "content":'大家好这是第3条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
+    "bbs_id":3, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Fourth BBS', "content":'大家好这是第4条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]}
+    ]
+
     var whereStr = {"user_name":'715811763@pku.edu.cn'};  // 查询条件（用于删除）
     dbo.collection("bbs").insertOne(initobj, function(err, res) {
         if (err) throw err;
@@ -107,5 +114,4 @@ MongoClient.connect(url, {usrNewUrlParser: true}, function (err, db) {
     create_studydata(db, dbo, is_delete);
 
     db.close();
-
 });
