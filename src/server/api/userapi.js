@@ -148,14 +148,15 @@ router.use('/searchUser', function(req, res) {
                 console.log("密码不正确");
                 search_result = 1;
             }
+		    res.json({
+		        code:search_result
+		    })
             db.close();
         });
     
     });
 
-    res.json({
-        code:search_result
-    })
+
 })
 
 

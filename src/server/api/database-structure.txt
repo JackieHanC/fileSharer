@@ -10,5 +10,5 @@
 
 3.
 表名：studydata
-每个项的组成： course:’xxx’, “major”:’xxx’, “filename”:’xxx’, “intro”:’xxx’, “path”:’xxx’
-含义：每个文件的年级，专业，文件名，简介，存放的路径
+每个项的组成： 'file_id': xx, 'file_title':'xxx', course':’xxx’, “major”:’xxx’, “intro”:’xxx’, “path”:’xxx’
+含义：每个文件的全局编号（文件名依据此来定义），发布的标题，年级，专业，简介，存放的路径
