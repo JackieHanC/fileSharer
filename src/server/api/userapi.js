@@ -116,6 +116,7 @@ router.use('/sendMailCode', function(req, res){
     })
 
 
+
 })
 
 
@@ -217,5 +218,6 @@ router.use('/signUp', function (req, res) {
 	});
 
 })
+
 
 module.exports = router
