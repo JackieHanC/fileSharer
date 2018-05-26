@@ -15,8 +15,8 @@ Vue.prototype.$ajax = axios
 var router = new Router({
     mode: 'history',
     routes: [
-        { name: 'hello', path: '/hello', component: Hello },
-        { name: 'login', path: '/login', component: login },
+        // { name: 'hello', path: '/hello', component: Hello },
+        // { name: 'login', path: '/login', component: login },
         { name: 'home', path: '/', component: home }
     ]
 })

@@ -1,51 +1,57 @@
 <template>
-  <div class="ui card">
-      <div class="content">  
-        <div class="ui form">
-            <div class="ui field" align="center">
-                <h1>fileSharer</h1>
-            </div>
-            <div class="ui field">
-                <div class="ui icon input"
-                     id="username" 
-                     :data-content="usernameError">
-                    <input 
-                        type="text" 
-                        placeholder="注册邮箱" 
-                        v-model="username"/>
-                    <i v-bind:class="usernameIcon"></i>
-                </div>
-            </div>
-            <div class="ui field">
-                <div class="ui icon input" id="password" :data-content="passwordError">
-                    <input class="ui input" type="password" placeholder="密码" v-model="password"/>
-                    <i :class="pwdIcon"></i>
-                </div>
-            </div>
-            <div class="ui field">
-                <div class="ui icon input" id="password2" data-content="密码与第一次不符">
-                    <input class="ui input" type="password" placeholder="再次输入密码" v-model="password2"/>
-                    <i v-bind:class="pwd2Icon"></i>
-                </div>
-            </div>
-            <div class="ui field">
-                <div class="fluid ui action input">
-                    <div class="fluid ui icon input">
-                        <input type="text" placeholder="验证码" v-model="icode">
-                        <i :class="icodeIcon"></i>
+    <div style="display: flex; align-items: center; justify-content: center;">
+        <div class="ui card" >
+            <div class="content">  
+                <div class="ui form">
+                    <div class="ui field" align="center">
+                        <h1>fileSharer</h1>
                     </div>
-                    <button id="sendButton" 
-                            :class="codeButton" 
-                            @click="sendCode">
-                            {{ buttonValue }}
-                    </button>
+                    <div class="ui field">
+                        <div class="ui icon input"
+                            id="username" 
+                            :data-content="usernameError">
+                            <input 
+                                type="text" 
+                                placeholder="注册邮箱" 
+                                v-model="username"/>
+                            <i v-bind:class="usernameIcon"></i>
+                        </div>
+                    </div>
+                    <div class="ui field">
+                        <div class="ui icon input" id="password" :data-content="passwordError">
+                            <input class="ui input" type="password" placeholder="密码" v-model="password"/>
+                            <i :class="pwdIcon"></i>
+                        </div>
+                    </div>
+                    <div class="ui field">
+                        <div class="ui icon input" id="password2" data-content="密码与第一次不符">
+                            <input class="ui input" type="password" placeholder="再次输入密码" v-model="password2"/>
+                            <i v-bind:class="pwd2Icon"></i>
+                        </div>
+                    </div>
+                    <div class="ui field">
+                        <div class="fluid ui action input">
+                            <div class="fluid ui icon input">
+                                <input type="text" placeholder="验证码" v-model="icode">
+                                <i :class="icodeIcon"></i>
+                            </div>
+                            <button id="sendButton" 
+                                    :class="codeButton" 
+                                    @click="sendCode">
+                                    {{ buttonValue }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ui field">
+                        <button :class="signUpBtn" @click="sub" >注册</button>
+                    </div>
+
+                <!-- <div class="ui field" style="text-align: center;">
+                    <a @click="toHome" style="align: center;">已有账号？</a>
+                </div> -->
                 </div>
-            </div>
-            <div class="ui field">
-                <button :class="signUpBtn" @click="sub" >注册</button>
             </div>
         </div>
-      </div>
     </div>
 </template>
 
@@ -138,6 +144,9 @@ export default {
                 return true;
             else 
                 return false;
+        },
+        toHome: function() {
+            this.$router.push({path: '/'})
         }
     },
     watch: {
@@ -165,7 +174,7 @@ export default {
                 }).then(function (response) {
                     if (response.data['code'] === 1) {
                         self.usernameError = "邮箱已注册"
-                        self.usernameIcon = "red time icon"
+                        self.usernameIcon = "red times icon"
                         $('#username').popup()
                     } else if (response.data['code'] === 0){
                         $('#username').popup('destroy')

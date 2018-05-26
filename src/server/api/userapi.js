@@ -23,7 +23,9 @@ function generate_code()
 
 // 检查用户名是否存在
 router.use('/checkUserExistence', function(req,res){
-
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+	var is_exist = 0;
 
 	
 	//var user = '' + req.body.username;		// 用户账号

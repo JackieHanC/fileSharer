@@ -1,8 +1,8 @@
 <template>
-    <div class="ui grid container">
+    <div class="ui fluid grid">
         
         <div class="ui fixed borderless fluid primary menu">
-            <a class="item">
+            <a class="item" @click="returnHome">
                 <h2>FileSharer</h2>
             </a>
             <div class="item">
@@ -32,7 +32,7 @@
                             {{ buttonValue1 }}
                     </button>
                 </div>
-               <div class="item">
+            <div class="item">
                     <button id="sendButton" 
                             :class="codeButton" 
                             @click="register">
@@ -48,15 +48,59 @@
                     <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item">item1</a>
-                        <a class="item">item2</a>
+                        <a class="item" @click="logOut">注销</a>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="row" style="height: 80px;"></div>
         
+        <!-- <div class="ui divider"></div> -->
+        
+        <div class="four wide column"></div>
+        <!-- <div class="ui divider"></div> -->
+        <div class="eight wide column" :style="mainList">
+            <!-- <h2>first row</h2>
+            <h2>second row</h2> -->
+            <!-- <div class="ui card" v-for="it in lst" :key="it.id">{{it.content}}</div> -->
+            <!-- <div class="ui relaxed divided list"> -->
+            <div class="ui fluid card" style="cursor: pointer;" v-for="it in dataList" :key="it.id" @click="showPost(it.id)">
+                <div class="content">
+                    <h3>{{it.content}}</h3>
+                </div>
+            </div>
+
+            <!-- <div class="ui segments">
+                <div class="ui segment" v-for="it in lst" :key="it.id">
+                    <p> {{it.content}} </p>
+                </div>
+            </div> -->
+            <!-- </div> -->
+        </div>
+        <div class="eight wide column" :style="singlePost">
+            <div class="ui fluid card">
+                <div class="content">
+                    <div class="header"> {{thePost.title}}</div>
+                </div>
+                <div class="content">
+                    <!-- <div class=""></div> -->
+                    <p>{{ thePost.content }}</p>
+                </div>
+                <!-- <p>this is the single post</p> -->
+            </div>
+        </div>
+        <div class="four wide column"></div>
+        <div class="ui small modal">
+            <div class="content">
+                <login></login>
+            </div>
+        </div>
     </div>
+
+    
 </template>
 <script>
+    import login from './login.vue'
     export default {
         data() {
             return {
@@ -70,7 +114,15 @@
                 usernameError: "",
                 passwordError: "",
                 loginInputs: "display:none;",
-                loginStatus: ""
+                loginStatus: "",
+                dataList: [],
+                mainList: "",
+                singlePost: "display: none;",
+                thePost: {
+                    title: "the Post",
+                    content: "file in the course: database"
+                }
+                // dataList: []
             }
         },
         methods: {
@@ -103,7 +155,20 @@
                 })
             },
             register: function(){
-                this.$router.push({path: '/login'});
+                // this.$router.push({path: '/login'});
+                $('.ui.small.modal').modal('show');
+            },
+            logOut: function() {
+                this.loginStatus = 'display: none;';
+                this.loginInputs = '';
+                this.username = '';
+            },
+            showPost: function (postID) {
+                this.mainList = "display: none;";
+                this.singlePost = "";
+            },
+            returnHome: function() {
+                this.$router.push({ path: '/' })
             }
         },
         watch:{
@@ -120,6 +185,9 @@
                     $('#username').popup()
                     return
                 } 
+                this.usernameError = ""
+                this.usernameIcon = ""
+                $('#username').popup('destroy')
                 
             },
             // password: function() {
@@ -137,7 +205,10 @@
             // }
         },
         mounted: function () {
-            if (this.$getCookie('username')) {
+            // console.log(this.$getCookie('username'));
+            console.log("this is home")
+            this.username = this.$getCookie('username')
+            if (this.username) {
                 this.loginInputs = 'display: none;';
                 this.loginStatus = '';
             }else {
@@ -145,6 +216,27 @@
                 this.loginInputs = '';
             }
             $('.ui.dropdown.item').dropdown();
+
+            this.dataList = new Array(20);
+
+            for (var i = 0;i < 20;++i) {
+                this.dataList[i] = new Object();
+                this.dataList[i]['id'] = i;
+                this.dataList[i]['content'] = 'item' + i
+            }
+            // var self = this
+            // this.$ajax({
+            //     url: 'api/getDataList',
+            //     method: 'post',
+            //     data : {
+            //         id: 0
+            //     }
+            // }).then(function(response) {
+            //     self.dataList = response.data['dataList']
+            // })
+        },
+        components: {
+            login
         }
     }
     

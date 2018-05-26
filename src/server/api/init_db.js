@@ -13,7 +13,7 @@ mongodb 部分语句：
 
 DB各个表的项以及项的类型
 > db.bbs.find()
-{ "_id" : ObjectId("5b02c2f487f25e4685809194"), "bbs_id" : "0", "user_name" : "715811763@pku.edu.cn", "date" : "2018-05-21", "content" : "大家好这是第一条帖子", "comment" : [ "自己给自己评论一下吧" ], "comment_user" : [ "715811763@pku.edu.cn" ] }
+{ "_id" : ObjectId("5b02c2f487f25e4685809194"), "bbs_id" : "0", "user_name" : "715811763@pku.edu.cn", "date" : "2018-05-21", "title": 'First BBS', "content" : "大家好这是第一条帖子", "comment" : [ "自己给自己评论一下吧" ], "comment_user" : [ "715811763@pku.edu.cn" ] }
 > db.studydata.find()
 { "_id" : ObjectId("5b02c2f487f25e4685809195"), "course" : "test", "major" : "EECS", "filename" : "1.jpg", "intro" : "初始测试文件", "path" : "../public/EECS/1.jpg" }
 > db.account.find()
@@ -56,7 +56,7 @@ function create_bbs(db, dbo, is_delete){
     });
 
     // 插入一条初始数据
-    var initobj = { "bbs_id":'0', "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "content":'大家好这是第一条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]};
+    var initobj = { "bbs_id":'0', "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'First BBS', "content":'大家好这是第一条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]};
     var whereStr = {"user_name":'715811763@pku.edu.cn'};  // 查询条件（用于删除）
     dbo.collection("bbs").insertOne(initobj, function(err, res) {
         if (err) throw err;
@@ -96,7 +96,7 @@ function create_studydata(db, dbo, is_delete){
     }
 }
  
-MongoClient.connect(url, function (err, db) {
+MongoClient.connect(url, {usrNewUrlParser: true}, function (err, db) {
     if (err) throw err;
     console.log('数据库已创建');
     var dbo = db.db("filesharer");
