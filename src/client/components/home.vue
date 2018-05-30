@@ -28,7 +28,7 @@
                 <div class="item">
                     <button id="sendButton" 
                             :class="codeButton" 
-                            @click="login">
+                            @click="newpost">
                             {{ buttonValue1 }}
                     </button>
                 </div>
@@ -48,6 +48,7 @@
                     <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item">item1</a>
+                        <a class="item" @click="newpost">新建帖子</a>
                         <a class="item" @click="logOut">注销</a>
                     </div>
                 </div>
@@ -170,6 +171,20 @@
             },
             returnHome: function() {
                 this.$router.push({ path: '/' })
+            },
+            newpost: function(){
+                //this.buttonValue1 = "gg";
+                //this.buttonValue1 = "登录";
+                this.dataList.length += 1;
+                var a = this.dataList.length-1;
+                this.dataList[a] = new Object();
+                for(var i = a;i>0;i--){
+                    this.dataList[i]['id'] = this.dataList[i-1]['id'];
+                    this.dataList[i]['content'] = this.dataList[i-1]['content'];
+                }
+                this.dataList[0]['id'] = 0;
+                this.dataList[0]['content'] = "newpost";
+
             }
         },
         watch:{
@@ -220,11 +235,10 @@
 
 
             this.dataList = new Array(20);
-
             for (var i = 0;i < 20;++i) {
-                this.dataList[i] = new Object();
-                this.dataList[i]['id'] = i;
-                this.dataList[i]['content'] = 'item' + i
+               this.dataList[i] = new Object();
+               this.dataList[i]['id'] = i;
+               this.dataList[i]['content'] = 'item' + i
             }
             // var self = this
             // this.$ajax({
