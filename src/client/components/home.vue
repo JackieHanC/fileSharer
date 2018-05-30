@@ -28,7 +28,7 @@
                 <div class="item">
                     <button id="sendButton" 
                             :class="codeButton" 
-                            @click="newpost">
+                            @click="login">
                             {{ buttonValue1 }}
                     </button>
                 </div>
