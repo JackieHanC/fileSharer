@@ -136,7 +136,7 @@
                     data: {
                         username: this.username,
                         password: this.password
-                    },
+                    }
                     
                 }).then(function (response) {
                     if(response.data['code'] === 0){
@@ -184,7 +184,16 @@
                 }
                 this.dataList[0]['id'] = 0;
                 this.dataList[0]['content'] = "newpost";
+                this.$ajax({
+                    method: "post",
+                    url: "api/newPost", 
+                    data: {
+                        username: this.username,
+                        title: this.thePost.title,
+                        content: this.thePost.content
+                    }
 
+                })
             }
         },
         watch:{
