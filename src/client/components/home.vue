@@ -57,7 +57,10 @@
         
         <!-- <div class="ui divider"></div> -->
         
-        <div class="four wide column"></div>
+        <div class="four wide column">
+            <div class="ui right floated button" :style="singlePost"
+                @click="returnHome">Back</div>
+        </div>
         <!-- <div class="ui divider"></div> -->
         <div class="eight wide column" :style="mainList">
             <!-- <h2>first row</h2>
@@ -78,7 +81,7 @@
             <!-- </div> -->
         </div>
         <div class="eight wide column" :style="singlePost">
-            <showingPost :name="thePost"></showingPost>
+            <showingPost :value="thePost"></showingPost>
         </div>
         <div class="four wide column"></div>
         <div class="ui small modal">
@@ -160,7 +163,9 @@
                 this.singlePost = "";
             },
             returnHome: function() {
-                this.$router.push({ path: '/' })
+                // this.$router.push({ path: '/' })
+                this.mainList = '';
+                this.singlePost = 'display: none;';
             }
         },
         watch:{
