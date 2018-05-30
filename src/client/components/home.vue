@@ -58,7 +58,10 @@
         
         <!-- <div class="ui divider"></div> -->
         
-        <div class="four wide column"></div>
+        <div class="four wide column">
+            <div class="ui right floated button" :style="singlePost"
+                @click="returnHome">Back</div>
+        </div>
         <!-- <div class="ui divider"></div> -->
         <div class="eight wide column" :style="mainList">
             <!-- <h2>first row</h2>
@@ -79,16 +82,7 @@
             <!-- </div> -->
         </div>
         <div class="eight wide column" :style="singlePost">
-            <div class="ui fluid card">
-                <div class="content">
-                    <div class="header"> {{thePost.title}}</div>
-                </div>
-                <div class="content">
-                    <!-- <div class=""></div> -->
-                    <p>{{ thePost.content }}</p>
-                </div>
-                <!-- <p>this is the single post</p> -->
-            </div>
+            <showingPost :value="thePost"></showingPost>
         </div>
         <div class="four wide column"></div>
         <div class="ui small modal">
@@ -102,6 +96,7 @@
 </template>
 <script>
     import login from './login.vue'
+    import showingPost from './showingPost.vue'
     export default {
         data() {
             return {
@@ -170,7 +165,9 @@
                 this.singlePost = "";
             },
             returnHome: function() {
-                this.$router.push({ path: '/' })
+
+                this.mainList = '';
+                this.singlePost = 'display: none;';
             },
             newpost: function(){
                 //this.buttonValue1 = "gg";
@@ -194,6 +191,8 @@
                     }
 
                 })
+
+
             }
         },
         watch:{
@@ -262,7 +261,8 @@
 
         },
         components: {
-            login
+            login,
+            showingPost
         }
     }
     
