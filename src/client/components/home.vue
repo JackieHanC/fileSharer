@@ -118,6 +118,7 @@
                     content: "file in the course: database"
                 }
                 // dataList: []
+
             }
         },
         methods: {
@@ -214,6 +215,7 @@
             }
             $('.ui.dropdown.item').dropdown();
 
+
             this.dataList = new Array(20);
 
             for (var i = 0;i < 20;++i) {
@@ -231,6 +233,7 @@
             // }).then(function(response) {
             //     self.dataList = response.data['dataList']
             // })
+
         },
         components: {
             login,
