@@ -78,16 +78,7 @@
             <!-- </div> -->
         </div>
         <div class="eight wide column" :style="singlePost">
-            <div class="ui fluid card">
-                <div class="content">
-                    <div class="header"> {{thePost.title}}</div>
-                </div>
-                <div class="content">
-                    <!-- <div class=""></div> -->
-                    <p>{{ thePost.content }}</p>
-                </div>
-                <!-- <p>this is the single post</p> -->
-            </div>
+            <showingPost :name="thePost"></showingPost>
         </div>
         <div class="four wide column"></div>
         <div class="ui small modal">
@@ -101,6 +92,7 @@
 </template>
 <script>
     import login from './login.vue'
+    import showingPost from './showingPost.vue'
     export default {
         data() {
             return {
@@ -236,7 +228,8 @@
             // })
         },
         components: {
-            login
+            login,
+            showingPost
         }
     }
     
