@@ -48,6 +48,7 @@
                     <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item">item1</a>
+                        <a class="item" @click="newpost">新建帖子</a>
                         <a class="item" @click="logOut">注销</a>
                     </div>
                 </div>
@@ -57,7 +58,10 @@
         
         <!-- <div class="ui divider"></div> -->
         
-        <div class="four wide column"></div>
+        <div class="four wide column">
+            <div class="ui right floated button" :style="singlePost"
+                @click="returnHome">Back</div>
+        </div>
         <!-- <div class="ui divider"></div> -->
         <div class="eight wide column" :style="mainList">
             <!-- <h2>first row</h2>
@@ -78,16 +82,7 @@
             <!-- </div> -->
         </div>
         <div class="eight wide column" :style="singlePost">
-            <div class="ui fluid card">
-                <div class="content">
-                    <div class="header"> {{thePost.title}}</div>
-                </div>
-                <div class="content">
-                    <!-- <div class=""></div> -->
-                    <p>{{ thePost.content }}</p>
-                </div>
-                <!-- <p>this is the single post</p> -->
-            </div>
+            <showingPost :value="thePost"></showingPost>
         </div>
         <div class="four wide column"></div>
         <div class="ui small modal">
@@ -101,6 +96,7 @@
 </template>
 <script>
     import login from './login.vue'
+    import showingPost from './showingPost.vue'
     export default {
         data() {
             return {
@@ -135,7 +131,7 @@
                     data: {
                         username: this.username,
                         password: this.password
-                    },
+                    }
                     
                 }).then(function (response) {
                     if(response.data['code'] === 0){
@@ -169,7 +165,34 @@
                 this.singlePost = "";
             },
             returnHome: function() {
-                this.$router.push({ path: '/' })
+
+                this.mainList = '';
+                this.singlePost = 'display: none;';
+            },
+            newpost: function(){
+                //this.buttonValue1 = "gg";
+                //this.buttonValue1 = "登录";
+                this.dataList.length += 1;
+                var a = this.dataList.length-1;
+                this.dataList[a] = new Object();
+                for(var i = a;i>0;i--){
+                    this.dataList[i]['id'] = this.dataList[i-1]['id'];
+                    this.dataList[i]['content'] = this.dataList[i-1]['content'];
+                }
+                this.dataList[0]['id'] = 0;
+                this.dataList[0]['content'] = "newpost";
+                this.$ajax({
+                    method: "post",
+                    url: "api/newPost", 
+                    data: {
+                        username: this.username,
+                        title: this.thePost.title,
+                        content: this.thePost.content
+                    }
+
+                })
+
+
             }
         },
         watch:{
@@ -220,11 +243,10 @@
 
 
             this.dataList = new Array(20);
-
             for (var i = 0;i < 20;++i) {
-                this.dataList[i] = new Object();
-                this.dataList[i]['id'] = i;
-                this.dataList[i]['content'] = 'item' + i
+               this.dataList[i] = new Object();
+               this.dataList[i]['id'] = i;
+               this.dataList[i]['content'] = 'item' + i
             }
             // var self = this
             // this.$ajax({
@@ -239,7 +261,8 @@
 
         },
         components: {
-            login
+            login,
+            showingPost
         }
     }
     
