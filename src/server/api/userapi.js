@@ -219,5 +219,38 @@ router.use('/signUp', function (req, res) {
 
 })
 
+router.use('/getDataList', function (req, res) {
+
+	console.log('准备读取帖子信息');
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+	var idBegin = req.body.idBegin;
+
+	var data=[];
+	MongoClient.connect(url,  {useNewUrlParser: true}, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+		dbo.collection("bbs").find({}, {limit: 20, skip:idBegin-1}).toArray(function(err, res) {
+			if (err) throw err;
+			for(var i=0;i<res.length;++i){
+				var obj={"id":res[i]["bbs_id"],"title":res[i]["title"]};
+				data.push(obj);
+			}
+
+			for(var item in data){					//这里后端测试显示读出来的数据是对的，但是前端怎么显示不知道
+				console.log( data[item]["id"])
+				console.log( data[item]["title"])
+			 }
+			console.log(data);
+			console.log('帖子信息读取完毕');
+			db.close();
+		});
+	});
+	res.json({
+		dataList:data
+	})
+
+})
 
 module.exports = router
