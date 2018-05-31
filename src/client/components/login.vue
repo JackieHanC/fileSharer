@@ -8,7 +8,7 @@
                     </div>
                     <div class="ui field">
                         <div class="ui icon input"
-                            id="username" 
+                            id="regUsername" 
                             :data-content="usernameError">
                             <input 
                                 type="text" 
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                     <div class="ui field">
-                        <div class="ui icon input" id="password" :data-content="passwordError">
+                        <div class="ui icon input" id="regPassword" :data-content="passwordError">
                             <input class="ui input" type="password" placeholder="密码" v-model="password"/>
                             <i :class="pwdIcon"></i>
                         </div>
@@ -83,7 +83,7 @@ export default {
             
             var self = this
             var MD5 = require('md5.js')
-            console.log(new MD5().update(pwd).digest('hex'));
+            // console.log(new MD5().update(pwd).digest('hex'));
             
             if (name != '' && pwd != '') {
                 this.$ajax({
@@ -155,12 +155,12 @@ export default {
             if (this.username === "") {
                 this.usernameError = "邮箱不能为空"
                 this.usernameIcon = "red times icon"
-                $('#username').popup()
+                $('#regUsername').popup()
                 return
             } else if (!reg.test(this.username)) {
                 this.usernameError = "请输入正确的邮箱格式"
                 this.usernameIcon = "red times icon"
-                $('#username').popup()
+                $('#regUsername').popup()
                 return
             } else {
                 let self = this
@@ -175,9 +175,9 @@ export default {
                     if (response.data['code'] === 1) {
                         self.usernameError = "邮箱已注册"
                         self.usernameIcon = "red times icon"
-                        $('#username').popup()
+                        $('#regUsername').popup()
                     } else if (response.data['code'] === 0){
-                        $('#username').popup('destroy')
+                        $('#regUsername').popup('destroy')
                         self.usernameIcon = "green check icon"
                     } else {
                         console.log("wrong return code")
@@ -192,10 +192,10 @@ export default {
             if (this.password.length < 8) {
                 this.passwordError = "密码长度应不小于8"
                 this.pwdIcon = "red times icon"
-                $('#password').popup()
+                $('#regPassword').popup()
             }else {
                 this.pwdIcon = "green check icon"
-                $('#password').popup('destroy')
+                $('#regPassword').popup('destroy')
             }
             if (this.canSignUp()) {
                 this.signUpBtn = "fluid ui primary button"
@@ -204,10 +204,10 @@ export default {
         password2: function () {
             if (this.password !== this.password2) {
                 this.pwd2Icon = "red times icon"
-                $('#password2').popup()
+                $('#regPassword2').popup()
             }else {
                 this.pwd2Icon = "green check icon"
-                $('#password2').popup('destroy')
+                $('#regPassword2').popup('destroy')
             }
             if (this.canSignUp()) {
                 this.signUpBtn = "fluid ui primary button"
