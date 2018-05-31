@@ -1,4 +1,19 @@
 /*
+在运行node.js文件之前，先复制下面的几行，在命令行执行。
+
+mongo
+use filesharer
+db.account.drop()
+db.bbs.drop()
+db.studydata.drop()
+db.createCollection("account")
+db.createCollection("bbs")
+db.createCollection("studydata")
+show tables
+
+*/
+
+/*
 
 初始化数据库，数据库使用mongodb, 然后 sudo mongodb开启数据库
 在服务器中，可以使用 tmux 语句，让他一直在后台运行
@@ -11,6 +26,7 @@ mongodb 部分语句：
 > show dbs：展示所有数据库
 > show tables：展示数据库中的表
 > db.account.remove({"name":""})  删除记录
+
 
 DB各个表的项以及项的类型
 > db.bbs.find()
@@ -25,11 +41,6 @@ var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/filesharer";
 
 function create_account(db, dbo, is_delete){
-    // 创建account数据库
-    dbo.createCollection('account', function (err, res) {
-        if (err) throw err;
-        console.log("创建集合 account");
-    });
 
     // 插入一条初始数据
     var myid = 0;
@@ -50,25 +61,19 @@ function create_account(db, dbo, is_delete){
 }
 
 function create_bbs(db, dbo, is_delete){
-    // bbs
-    dbo.createCollection('bbs', function (err, res) {
-        if (err) throw err;
-        console.log("创建集合 bbs");
-    });
 
     // 插入一条初始数据
 
     var initobj = [{ "bbs_id":0, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'First BBS', "content":'大家好这是第1条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
-    "bbs_id":1, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Second BBS', "content":'大家好这是第2条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
-    "bbs_id":2, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Third BBS', "content":'大家好这是第3条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
-    "bbs_id":3, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Fourth BBS', "content":'大家好这是第4条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]}
+    {"bbs_id":1, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Second BBS', "content":'大家好这是第2条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
+    {"bbs_id":2, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Third BBS', "content":'大家好这是第3条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]},
+    {"bbs_id":3, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Fourth BBS', "content":'大家好这是第4条帖子', "comment":["自己给自己评论一下吧"], "comment_user":["715811763@pku.edu.cn"]}
     ]
 
     var whereStr = {"user_name":'715811763@pku.edu.cn'};  // 查询条件（用于删除）
-    dbo.collection("bbs").insertOne(initobj, function(err, res) {
+    dbo.collection("bbs").insertMany(initobj, function(err, res) {
         if (err) throw err;
         console.log("bbs 文档插入成功");
-        db.close();
     });
 
     if(is_delete){
@@ -80,11 +85,7 @@ function create_bbs(db, dbo, is_delete){
 }
 
 function create_studydata(db, dbo, is_delete){
-    // studydata
-    dbo.createCollection('studydata', function (err, res) {
-        if (err) throw err;
-        console.log("创建集合 studydata");
-    });
+
 
     // 插入一条初始数据
     var initobj = { "course":'test', "major":"EECS", "filename":'1.jpg', "intro":'初始测试文件', "path":'../public/EECS/1.jpg'};
@@ -92,7 +93,6 @@ function create_studydata(db, dbo, is_delete){
     dbo.collection("studydata").insertOne(initobj, function(err, res) {
         if (err) throw err;
         console.log("studydata 文档插入成功");
-        db.close();
     });
 
     if(is_delete){
@@ -103,7 +103,7 @@ function create_studydata(db, dbo, is_delete){
     }
 }
  
-MongoClient.connect(url, {usrNewUrlParser: true}, function (err, db) {
+MongoClient.connect(url, {useNewUrlParser: true}, function (err, db) {
     if (err) throw err;
     console.log('数据库已创建');
     var dbo = db.db("filesharer");
@@ -114,4 +114,5 @@ MongoClient.connect(url, {usrNewUrlParser: true}, function (err, db) {
     create_studydata(db, dbo, is_delete);
 
     db.close();
+
 });
