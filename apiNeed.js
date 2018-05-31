@@ -53,3 +53,31 @@ receive: {
         //...
     ]
 }
+
+// name : /getPostByID
+// 获取帖子详细信息
+
+send: {
+    ID: n
+}
+
+receive: {
+    code: 0,// 0 for success, 1 for error
+    post: {
+        // everything about the post in the database
+    }
+}
+
+// name: /newPost
+// 上传新帖子
+
+send: {
+    username: '',
+    title: '',
+    content: ''
+}
+
+receive: {
+    code: 0,// 0 for success, 1 for error
+    newPostID: n // ID for the newly uploaded Post
+}

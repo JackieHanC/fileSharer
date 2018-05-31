@@ -47,7 +47,6 @@
                     {{username}}
                     <i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item">item1</a>
                         <a class="item" @click="newpost">新建帖子</a>
                         <a class="item" @click="logOut">注销</a>
                     </div>
@@ -85,9 +84,33 @@
             <showingPost :value="thePost"></showingPost>
         </div>
         <div class="four wide column"></div>
-        <div class="ui small modal">
+        <div class="ui small modal" id="regModal">
             <div class="content">
                 <login></login>
+            </div>
+        </div>
+
+        <div class="ui modal" id="newPostModal">
+            
+            <div class="content">
+                <div class="ui label">标题</div>
+                <div class="ui fluid input">
+                    <input type="text" v-model="theNewPost.title">
+                </div>
+                <div class="ui divider"></div>
+
+                <div class="ui label">内容</div>
+                
+                <div class="ui reply form">
+                    <div class="ui field">
+                        <textarea v-model="theNewPost.content"></textarea>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="actions">
+                <div class="ui black deny button">取消</div>
+                <div class="ui right floated positive button" @click="upNewPost">确认</div>
             </div>
         </div>
     </div>
@@ -117,6 +140,10 @@
                 thePost: {
                     title: "the Post",
                     content: "file in the course: database"
+                },
+                theNewPost: {
+                    title:'',
+                    content: ''
                 }
                 // dataList: []
 
@@ -125,22 +152,25 @@
         methods: {
             login: function(){
                 let self = this
+
+                var MD5 = require('md5.js')
+
                 this.$ajax({
                     method: "post",
                     url: "api/searchUser",
                     data: {
                         username: this.username,
-                        password: this.password
+                        password: new MD5().update(this.password).digest('hex')
                     }
                     
                 }).then(function (response) {
                     if(response.data['code'] === 0){
                         self.usernameError = "用户不存在"
-                        self.usernameIcon = "red time icon"
+                        self.usernameIcon = "red times icon"
                         $('#username').popup()
                     }else if(response.data['code'] === 1){
                         self.passwordError = "密码错误"
-                        self.passwordIcon = "red time icon"
+                        self.pwdIcon = "red times icon"
                         $('#password').popup()   
                     }else{
                         self.loginInputs = "display: none";
@@ -153,7 +183,7 @@
             },
             register: function(){
                 // this.$router.push({path: '/login'});
-                $('.ui.small.modal').modal('show');
+                $('#regModal').modal('show');
             },
             logOut: function() {
                 this.loginStatus = 'display: none;';
@@ -163,6 +193,23 @@
             showPost: function (postID) {
                 this.mainList = "display: none;";
                 this.singlePost = "";
+                var self = this;
+                this.$ajax({
+                    methods: 'post',
+                    url: 'getPostByID',
+                    data: {
+                        ID: postID
+                    },
+                    timeout: 3000
+                }).then(function(response) {
+
+                    if (response.data['code'] == 0) {
+                        self.thePost = response.data['post']
+                    } else {
+                        // it should not happen
+                    }
+
+                })
             },
             returnHome: function() {
 
@@ -172,27 +219,60 @@
             newpost: function(){
                 //this.buttonValue1 = "gg";
                 //this.buttonValue1 = "登录";
-                this.dataList.length += 1;
-                var a = this.dataList.length-1;
-                this.dataList[a] = new Object();
-                for(var i = a;i>0;i--){
-                    this.dataList[i]['id'] = this.dataList[i-1]['id'];
-                    this.dataList[i]['content'] = this.dataList[i-1]['content'];
-                }
-                this.dataList[0]['id'] = 0;
-                this.dataList[0]['content'] = "newpost";
+                // this.dataList.length += 1;
+                // var a = this.dataList.length-1;
+                // this.dataList[a] = new Object();
+                // for(var i = a;i>0;i--){
+                //     this.dataList[i]['id'] = this.dataList[i-1]['id'];
+                //     this.dataList[i]['content'] = this.dataList[i-1]['content'];
+                // }
+                // this.dataList[0]['id'] = 0;
+                // this.dataList[0]['content'] = "newpost";
+                // this.$ajax({
+                //     method: "post",
+                //     url: "api/newPost", 
+                //     data: {
+                //         username: this.username,
+                //         title: this.thePost.title,
+                //         content: this.thePost.content
+                //     }
+
+                // })
+                $('#newPostModal').modal('show');
+
+            },
+            upNewPost: function () {
+                var self = this
+                var newID;
                 this.$ajax({
-                    method: "post",
-                    url: "api/newPost", 
+                    methods: 'post',
+                    url: 'api/newPost',
                     data: {
                         username: this.username,
-                        title: this.thePost.title,
-                        content: this.thePost.content
+                        title: this.theNewPost.title,
+                        content: this.theNewPost.content,
+                    },
+                    timeout: 3000
+                }).then(function(response) {
+                    // 插入成功
+                    if (response.data['code'] == 0) {
+                        newID = response.data['newPostID'];
                     }
-
                 })
 
+                this.dataList.unshift({
+                    id: newID,
+                    titile: this.theNewPost.title
+                })
 
+                console.log('newID' + newID + '\n' + 'newTitle' + 
+                    this.theNewPost.title);
+
+                this.theNewPost.title = '';
+                this.theNewPost.content = '';
+                
+                
+                
             }
         },
         watch:{
