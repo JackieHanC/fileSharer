@@ -1,7 +1,6 @@
 /*
-在运行node.js文件之前，先复制下面的几行，在命令行执行。
+在运行node.js文件之前，先复制下面的几行，运行mongo命令后，在命令行执行。
 
-mongo
 use filesharer
 db.account.drop()
 db.bbs.drop()
