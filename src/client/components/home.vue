@@ -205,7 +205,7 @@
                 this.singlePost = "";
                 var self = this;
                 this.$ajax({
-                    methods: 'post',
+                    method: 'post',
                     url: 'getPostByID',
                     data: {
                         ID: postID
@@ -255,7 +255,7 @@
                 var self = this
                 var newID;
                 this.$ajax({
-                    methods: 'post',
+                    method: 'post',
                     url: 'api/newPost',
                     data: {
                         username: this.username,
