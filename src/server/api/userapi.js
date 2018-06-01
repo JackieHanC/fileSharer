@@ -34,6 +34,7 @@ router.use('/checkUserExistence', function(req,res){
 
 	//console.log('\n\n\n' + myquery['name']);
 	//console.log(typeof(myquery['name'] + '\n\n\n\n\n'));
+	console.log("********************************* checkUserExistence *********************************");
 
 	// 连接数据库
 	MongoClient.connect(url, function (err, db) {
@@ -68,6 +69,8 @@ router.use('/sendMailCode', function(req, res){
 	var email_address = req.body.mail;		// 邮箱地址
 	var sendcode = generate_code();		// 随机验证码
 	var email_wrong = 1;		// 0表示成功，1表示失败
+
+	console.log("********************************* sendMailCode *********************************");
 
 	// 邮箱为空
     if (!email_address) {
@@ -133,6 +136,8 @@ router.use('/searchUser', function(req, res) {
     var user = '' + req.body.username;		// 用户账号
     var pwd = '' + req.body.password;       // 用户密码
     var myquery = {"name": user};           
+
+    console.log("********************************* searchUser *********************************");
         
     MongoClient.connect(url, function (err, db) {
         if (err) throw err;
@@ -172,6 +177,8 @@ router.use('/signUp', function (req, res) {
 	var myquery = {"name": username};
 	var myid = Number(0);
 	var insertobj={};		// 要插入的表项
+
+	console.log("********************************* signUp *********************************");
 
 	// 连接数据库
 	MongoClient.connect(url, function (err, db) {
@@ -227,6 +234,9 @@ router.use('/getDataList', function (req, res) {
 	var idBegin = req.body.idBegin;
 
 	var data=[];
+
+	console.log("********************************* getDataList *********************************");
+
 	MongoClient.connect(url,  {useNewUrlParser: true}, function (err, db) {
 	    if (err) throw err;
 	    console.log('数据库已连接');
@@ -244,12 +254,120 @@ router.use('/getDataList', function (req, res) {
 			 }
 			console.log(data);
 			console.log('帖子信息读取完毕');
+
+			res.json({
+				dataList:data
+			})
+
 			db.close();
 		});
 	});
-	res.json({
-		dataList:data
-	})
+
+
+})
+
+
+/*
+上传新帖子
+*/
+router.use('/newPost', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var return_value;		// 0 for success, else 1
+	var username = "" + req.body.username;		// user name
+	var title = req.body.title;
+	var content = req.body.content;
+
+	console.log("********************************* newPost *********************************");
+
+	// 获取当前日期
+	var nowdate = new Date();
+	var now_year = nowdate.getFullYear();
+	var now_month = nowdate.getMonth()+1;
+	var now_day = nowdate.getDate();
+	var datestring = '' + now_year + '-' + now_month + '-' + now_day;
+
+	var myid = Number(0);
+	var insertobj={};		// 要插入的表项
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+	    
+	    res.json({
+	        newPostID: 0,
+	        code: 0
+    	})
+
+	    dbo.collection("bbs"). find({}).sort({"bbs_id" : -1}).limit(1).toArray(function(err, res) { // 返回集合中所有数据
+	        if (err) throw err;
+	        myid = res[0]['bbs_id']+1;
+	        insertobj = {"name": username, "bbs_id":Number(myid), "date": datestring, "title":title, "content":content};
+
+	        res['newPostID'] = myid;
+
+	    	dbo.collection("bbs").insertOne(insertobj, function(err, ress) {
+		        if (err) throw err;
+		        console.log("insertobj");
+		        console.log("新BBS插入成功");
+		        db.close();				// !!!!!!!!!!!!这个写在外面就一直 "MongoError: server instance pool was destroyed"
+		    });
+		});
+	});
+
+})
+
+/*
+根据ID号获得帖子的具体信息
+*/
+router.use('/getPostByID', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var return_value;		// 0 for success, else 1
+	var postid = Number(req.body.ID);
+
+	console.log("********************************* getPostByID *********************************");
+	console.log("GET a postID : " + postid);
+
+	var insertobj={};		// 要插入的表项
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+	    
+	    res.json({
+	    	code: 0,// 0 for success, 1 for error
+		    post: {
+		        // everything about the post in the database
+		    }
+    	})
+
+		dbo.collection("bbs").find({bbs_id:postid}).toArray(function(err, res) {
+			if (err) throw err;
+
+			if(res.length == 0){
+				res['code'] = 0;
+			}
+			else{
+				returnobj = {"bbs_id":postid, "username":res[0]['username'], "date":res[0]['date'], "title":res[0]['title'], "content":res[0]['content'], "comment":res[0]['comment'], "comment_user": res[0]['comment_user']};
+				console.log(data);
+				console.log('帖子信息加载完毕');
+
+				res['post'] = returnobj;	
+			}
+
+			console.log(res);
+
+
+			db.close();
+		});
+	});
 
 })
 
