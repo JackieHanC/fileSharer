@@ -30,6 +30,15 @@ module.exports = merge(baseWebpackConfig, {
       template: 'src/server/views/index.html',
       inject: true
     }),
-    new FriendlyErrorsPlugin()
+    new FriendlyErrorsPlugin(),
+    
+    
+    new webpack.ProvidePlugin({
+      jQuery: "jquery",
+      $: "jquery",
+      "window.jquery": "jquery",
+      jquery: "jquery"
+    })
+    
   ]
 })
