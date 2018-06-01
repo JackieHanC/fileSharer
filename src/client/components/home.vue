@@ -93,21 +93,31 @@
         <div class="ui modal" id="newPostModal">
             
             <div class="content">
-                <div class="ui label">标题</div>
-                <div class="ui fluid input">
-                    <input type="text" v-model="theNewPost.title">
-                </div>
-                <div class="ui divider"></div>
+                <div class="ui form">
+                    <div class="field">
+                        <label>标题</label>
+                        <div class="ui fluid input">
+                            <input type="text" v-model="theNewPost.title">
+                        </div>
+                        
+                        
+                    </div>
+                    
+                    <div class="ui divider"></div>
 
-                <div class="ui label">内容</div>
-                
-                <div class="ui reply form">
-                    <div class="ui field">
-                        <textarea v-model="theNewPost.content"></textarea>
+                    <div class="field">
+                        <label>内容</label>
+                        
+                        <div class="ui reply form">
+                            <div class="ui field">
+                                <textarea v-model="theNewPost.content"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
             </div>
+            
             <div class="actions">
                 <div class="ui black deny button">取消</div>
                 <div class="ui right floated positive button" @click="upNewPost">确认</div>
