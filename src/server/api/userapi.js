@@ -241,10 +241,10 @@ router.use('/getDataList', function (req, res) {
 	    if (err) throw err;
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
-		dbo.collection("bbs").find({}, {limit: 20, skip:idBegin-1}).toArray(function(err, res) {
+		dbo.collection("bbs").find({}, {limit: 20, skip:idBegin}).toArray(function(err, ress) {
 			if (err) throw err;
-			for(var i=0;i<res.length;++i){
-				var obj={"id":res[i]["bbs_id"],"title":res[i]["title"]};
+			for(var i=0;i<ress.length;++i){
+				var obj={"id":ress[i]["bbs_id"],"title":ress[i]["title"]};
 				data.push(obj);
 			}
 
@@ -302,14 +302,14 @@ router.use('/newPost', function (req, res) {
 	        code: 0
     	})
 
-	    dbo.collection("bbs"). find({}).sort({"bbs_id" : -1}).limit(1).toArray(function(err, res) { // 返回集合中所有数据
+	    dbo.collection("bbs"). find({}).sort({"bbs_id" : -1}).limit(1).toArray(function(err, ress) { // 返回集合中所有数据
 	        if (err) throw err;
-	        myid = res[0]['bbs_id']+1;
+	        myid = ress[0]['bbs_id']+1;
 	        insertobj = {"name": username, "bbs_id":Number(myid), "date": datestring, "title":title, "content":content};
 
 	        res['newPostID'] = myid;
 
-	    	dbo.collection("bbs").insertOne(insertobj, function(err, ress) {
+	    	dbo.collection("bbs").insertOne(insertobj, function(err, resss) {
 		        if (err) throw err;
 		        console.log("insertobj");
 		        console.log("新BBS插入成功");
@@ -348,14 +348,14 @@ router.use('/getPostByID', function (req, res) {
 		    }
     	})
 
-		dbo.collection("bbs").find({bbs_id:postid}).toArray(function(err, res) {
+		dbo.collection("bbs").find({bbs_id:postid}).toArray(function(err, ress) {
 			if (err) throw err;
 
-			if(res.length == 0){
+			if(ress.length == 0){
 				res['code'] = 0;
 			}
 			else{
-				returnobj = {"bbs_id":postid, "username":res[0]['username'], "date":res[0]['date'], "title":res[0]['title'], "content":res[0]['content'], "comment":res[0]['comment'], "comment_user": res[0]['comment_user']};
+				returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comment":ress[0]['comment'], "comment_user": ress[0]['comment_user']};
 				console.log('帖子信息加载完毕');
 
 				res['post'] = returnobj;	
