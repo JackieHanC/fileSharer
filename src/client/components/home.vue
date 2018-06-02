@@ -332,22 +332,22 @@
             $('.ui.dropdown.item').dropdown();
 
 
-            this.dataList = new Array(20);
-            for (var i = 0;i < 20;++i) {
-               this.dataList[i] = new Object();
-               this.dataList[i]['id'] = i;
-               this.dataList[i]['content'] = 'item' + i
-            }
-            // var self = this
-            // this.$ajax({
-            //     url: 'api/getDataList',
-            //     method: 'post',
-            //     data : {
-            //         id: 0
-            //     }
-            // }).then(function(response) {
-            //     self.dataList = response.data['dataList']
-            // })
+            // this.dataList = new Array(20);
+            // for (var i = 0;i < 20;++i) {
+            //    this.dataList[i] = new Object();
+            //    this.dataList[i]['id'] = i;
+            //    this.dataList[i]['content'] = 'item' + i
+            // }
+            var self = this
+            this.$ajax({
+                url: 'api/getDataList',
+                method: 'post',
+                data : {
+                    id: 0
+                }
+            }).then(function(response) {
+                self.dataList = response.data['dataList']
+            })
 
         },
         components: {
