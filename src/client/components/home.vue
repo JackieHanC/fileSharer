@@ -343,7 +343,7 @@
                 url: 'api/getDataList',
                 method: 'post',
                 data : {
-                    id: 0
+                    idBegin: 0
                 }
             }).then(function(response) {
                 self.dataList = response.data['dataList']

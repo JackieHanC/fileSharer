@@ -241,7 +241,7 @@ router.use('/getDataList', function (req, res) {
 	    if (err) throw err;
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
-		dbo.collection("bbs").find({}, {limit: 20, skip:idBegin-1}).toArray(function(err, res) {
+		dbo.collection("bbs").find({}, {limit: 20, skip:idBegin}).toArray(function(err, res) {
 			if (err) throw err;
 			for(var i=0;i<res.length;++i){
 				var obj={"id":res[i]["bbs_id"],"title":res[i]["title"]};
