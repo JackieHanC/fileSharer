@@ -207,7 +207,7 @@
                     }
                 }).then(function (response) {                    
                 })
-            }
+            },
             register: function(){
                 // this.$router.push({path: '/login'});
                 $('#regModal').modal('show');
