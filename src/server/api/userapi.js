@@ -341,32 +341,38 @@ router.use('/getPostByID', function (req, res) {
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
 	    
-	    res.json({
-	    	code: 0,// 0 for success, 1 for error
-		    post: {
-		        // everything about the post in the database
-		    }
-    	})
+	    // res.json({
+	    // 	code: 0,// 0 for success, 1 for error
+		//     post: {
+		//         // everything about the post in the database
+		//     }
+    	// })
 
 		dbo.collection("bbs").find({bbs_id:postid}).toArray(function(err, ress) {
 			if (err) throw err;
-
+			var code
+			var post
 			if(ress.length == 0){
-				res['code'] = 0;
+				// res['code'] = 0;
+				code = 1
 			}
 			else{
-				var returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comment":ress[0]['comment'], "comment_user": ress[0]['comment_user']};
+				var returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comments":ress[0]['comment'], "comment_user": ress[0]['comment_user']};
 				console.log('帖子信息加载完毕');
-
-				res['post'] = returnobj;	
+				code = 0;
+				post = returnobj;	
 			}
 
-			console.log(res['post']);
+			res.json({
+				'code': code,
+				'post': post
+			})
+			// console.log(res['post']);
 
 
 			db.close();
 		});
-		console.log(res['post']);
+		// console.log(res['post']);
 		
 	});
 

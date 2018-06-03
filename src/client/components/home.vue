@@ -148,8 +148,8 @@
                 mainList: "",
                 singlePost: "display: none;",
                 thePost: {
-                    title: "the Post",
-                    content: "file in the course: database"
+                    title: "",
+                    content: ""
                 },
                 theNewPost: {
                     title:'',
@@ -219,9 +219,11 @@
                 }).then(function(response) {
 
                     if (response.data['code'] == 0) {
-                        self.thePost = self.deepcopy(response.data['post'])
+                        self.thePost = response.data['post']
                         console.log(response.data['post'].title);
                         console.log(response.data['post'].content);
+                        
+                        console.log(self.thePost.title);
                         
                         
                         console.log('code = 0');
