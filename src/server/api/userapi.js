@@ -343,6 +343,7 @@ router.use('/getPostByID', function (req, res) {
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
 
+
 		dbo.collection("bbs").find({bbs_id:postid}).toArray(function(err, ress) {
 			if (err) throw err;
 			var returnobj = {}
@@ -363,10 +364,12 @@ router.use('/getPostByID', function (req, res) {
 			    post: returnobj
 			})
 
+
 			console.log(res['post']);
 
 		});		
 		db.close();
+
 	});
 
 })
