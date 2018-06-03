@@ -7,8 +7,8 @@
             </a>
             <div class="item">
                     <div class="ui icon input" id = "searchinfo">
-                        <input type="text" placeholder="搜索...">
-                        <i class="search link icon"></i>
+                        <input type="text" placeholder="搜索..." v-model="searchinfo"/>
+                        <i class="search link icon" @click="search"></i>
                     </div>
             </div>
             <div class="right menu" :style="loginInputs">
@@ -144,6 +144,7 @@
                 passwordError: "",
                 loginInputs: "display:none;",
                 loginStatus: "",
+                searchinfo: "",
                 dataList: [],
                 mainList: "",
                 singlePost: "display: none;",
@@ -196,6 +197,17 @@
                     
                 })
             },
+            search: function(){
+                let self = this
+                this.$ajax({
+                    method: "post",
+                    url: "api/search",
+                    data: {
+                        searchinfo: this.searchinfo
+                    }
+                }).then(function (response) {                    
+                })
+            }
             register: function(){
                 // this.$router.push({path: '/login'});
                 $('#regModal').modal('show');
