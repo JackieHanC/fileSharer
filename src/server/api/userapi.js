@@ -353,7 +353,7 @@ router.use('/getPostByID', function (req, res) {
 				retcode = 1;
 			}
 			else{
-				returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comment":ress[0]['comment']};
+				returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comments":ress[0]['comment']};
 				console.log('帖子信息加载完毕');
 
 				retcode = 0;
