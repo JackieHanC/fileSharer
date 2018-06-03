@@ -241,11 +241,7 @@ router.use('/getDataList', function (req, res) {
 	    if (err) throw err;
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
-<<<<<<< HEAD
-		dbo.collection("bbs").find({}, {limit: 20, skip:idBegin}).toArray(function(err, res) {
-=======
 		dbo.collection("bbs").find({}, {limit: 20, skip:idBegin}).toArray(function(err, ress) {
->>>>>>> 5abc9e72f6571768cb2cbf5013a2a49650f15406
 			if (err) throw err;
 			for(var i=0;i<ress.length;++i){
 				var obj={"id":ress[i]["bbs_id"],"title":ress[i]["title"]};
@@ -359,17 +355,19 @@ router.use('/getPostByID', function (req, res) {
 				res['code'] = 0;
 			}
 			else{
-				returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comment":ress[0]['comment'], "comment_user": ress[0]['comment_user']};
+				var returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comment":ress[0]['comment'], "comment_user": ress[0]['comment_user']};
 				console.log('帖子信息加载完毕');
 
 				res['post'] = returnobj;	
 			}
 
-			console.log(res);
+			console.log(res['post']);
 
 
 			db.close();
 		});
+		console.log(res['post']);
+		
 	});
 
 })

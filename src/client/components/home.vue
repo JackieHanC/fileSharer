@@ -69,7 +69,7 @@
             <!-- <div class="ui relaxed divided list"> -->
             <div class="ui fluid card" style="cursor: pointer;" v-for="it in dataList" :key="it.id" @click="showPost(it.id)">
                 <div class="content">
-                    <h3>{{it.content}}</h3>
+                    <h3>{{it.title}}</h3>
                 </div>
             </div>
 
@@ -160,6 +160,11 @@
             }
         },
         methods: {
+            deepcopy: function (oldObj) {
+                var newObj;
+                var strObj = JSON.stringify(oldObj);
+                return newObj = JSON.parse(strObj)
+            },
             login: function(){
                 let self = this
 
@@ -206,7 +211,7 @@
                 var self = this;
                 this.$ajax({
                     method: 'post',
-                    url: 'getPostByID',
+                    url: 'api/getPostByID',
                     data: {
                         ID: postID
                     },
@@ -214,7 +219,13 @@
                 }).then(function(response) {
 
                     if (response.data['code'] == 0) {
-                        self.thePost = response.data['post']
+                        self.thePost = self.deepcopy(response.data['post'])
+                        console.log(response.data['post'].title);
+                        console.log(response.data['post'].content);
+                        
+                        
+                        console.log('code = 0');
+                        
                     } else {
                         // it should not happen
                     }
@@ -272,7 +283,7 @@
 
                 this.dataList.unshift({
                     id: newID,
-                    titile: this.theNewPost.title
+                    title: this.theNewPost.title
                 })
 
                 console.log('newID' + newID + '\n' + 'newTitle' + 
@@ -346,9 +357,18 @@
                     idBegin: 0
                 }
             }).then(function(response) {
-                self.dataList = response.data['dataList']
+                // self.dataList = new Object(response.data['dataList'])
+                // console.log(response.data['dataList'][4].id);
+                // console.log(response.data['dataList'][4].title);
+                // for (x in response.data['dataList']) {
+                //     self.dataList.push(x)
+                // }
+                self.dataList = [].concat(response.data['dataList']);
+                console.log(self.dataList.length);
+                
             })
-
+            console.log(self.dataList.length);
+            
         },
         components: {
             login,
