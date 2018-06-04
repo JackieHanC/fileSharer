@@ -313,7 +313,7 @@ router.use('/newPost', function (req, res) {
 	    dbo.collection("bbs"). find({}).sort({"bbs_id" : -1}).limit(1).toArray(function(err, ress) { // 返回集合中所有数据
 	        if (err) throw err;
 	        myid = ress[0]['bbs_id']+1;
-	        insertobj = {"name": username, "bbs_id":Number(myid), "date": datestring, "title":title, "content":content};
+	        insertobj = {"name": username, "bbs_id":Number(myid), "date": datestring, "title":title, "content":content, "comment":[]};
 
 			res.json({
 				newPostID: myid,
