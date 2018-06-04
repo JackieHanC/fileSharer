@@ -313,7 +313,7 @@ router.use('/newPost', function (req, res) {
 	    dbo.collection("bbs"). find({}).sort({"bbs_id" : -1}).limit(1).toArray(function(err, ress) { // 返回集合中所有数据
 	        if (err) throw err;
 	        myid = ress[0]['bbs_id']+1;
-	        insertobj = {"name": username, "bbs_id":Number(myid), "date": datestring, "title":title, "content":content, "comment":[]};
+	        insertobj = {"name": username, "bbs_id":Number(myid), "like":0, "date": datestring, "title":title, "content":content, "comment":[]};
 
 			res.json({
 				newPostID: myid,
@@ -365,7 +365,7 @@ router.use('/getPostByID', function (req, res) {
 				retcode = 1;
 			}
 			else{
-				returnobj = {"bbs_id":postid, "username":ress[0]['username'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comments":ress[0]['comment']};
+				returnobj = {"bbs_id":postid, "username":ress[0]['username'], "like":ress[0]['like'], "date":ress[0]['date'], "title":ress[0]['title'], "content":ress[0]['content'], "comments":ress[0]['comment']};
 				console.log('帖子信息加载完毕');
 
 				retcode = 0;
@@ -375,7 +375,6 @@ router.use('/getPostByID', function (req, res) {
 		    	code: retcode,// 0 for success, 1 for error
 			    post: returnobj
 			})
-			console.log(res['post']);
 		});		
 		db.close();
 
