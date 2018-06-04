@@ -63,10 +63,10 @@ function create_bbs(db, dbo, is_delete){
 
     // 插入一条初始数据
 
-    var initobj = [{ "bbs_id":0, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'First BBS', "content":'大家好这是第1条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ], },
-    {"bbs_id":1, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Second BBS', "content":'大家好这是第2条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ] },
-    {"bbs_id":2, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Third BBS', "content":'大家好这是第3条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ] },
-    {"bbs_id":3, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "title": 'Fourth BBS', "content":'大家好这是第4条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ] }
+    var initobj = [{ "bbs_id":0, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "like":0, "title": 'First BBS', "content":'大家好这是第1条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ], },
+    {"bbs_id":1, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "like":0, "title": 'Second BBS', "content":'大家好这是第2条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ] },
+    {"bbs_id":2, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "like":0, "title": 'Third BBS', "content":'大家好这是第3条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ] },
+    {"bbs_id":3, "user_name":'715811763@pku.edu.cn', "date":'2018-05-21', "like":0, "title": 'Fourth BBS', "content":'大家好这是第4条帖子', "comment":[ {'id':0, 'user':"715811763@pku.edu.cn", 'content':"自己给自己评论一下吧"} ] }
     ]
 
     var whereStr = {"user_name":'715811763@pku.edu.cn'};  // 查询条件（用于删除）
