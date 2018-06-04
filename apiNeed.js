@@ -84,6 +84,7 @@ receive: {
 
 // name: /uploadComment
 send: {
+    postid: '',
     username: '',
     content: ''
 }
