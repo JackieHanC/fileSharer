@@ -304,22 +304,22 @@ router.use('/newPost', function (req, res) {
 	var insertobj={};		// 要插入的表项
 
 	// 连接数据库
-	MongoClient.connect(url, function (err, db) {
+	MongoClient.connect(url, { useNewUrlParser: true }, function (err, db) {
 	    if (err) throw err;
 	    console.log('数据库已连接');
 	    var dbo = db.db("filesharer");
 	    
-	    res.json({
-	        newPostID: 0,
-	        code: 0
-    	})
 
 	    dbo.collection("bbs"). find({}).sort({"bbs_id" : -1}).limit(1).toArray(function(err, ress) { // 返回集合中所有数据
 	        if (err) throw err;
 	        myid = ress[0]['bbs_id']+1;
 	        insertobj = {"name": username, "bbs_id":Number(myid), "date": datestring, "title":title, "content":content};
 
-	        res['newPostID'] = myid;
+			res.json({
+				newPostID: myid,
+				code: 0
+			})
+	        // res['newPostID'] = myid;
 
 	    	dbo.collection("bbs").insertOne(insertobj, function(err, resss) {
 		        if (err) throw err;

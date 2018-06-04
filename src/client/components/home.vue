@@ -296,22 +296,16 @@
                     // 插入成功
                     if (response.data['code'] == 0) {
                         newID = response.data['newPostID'];
+                        self.dataList.unshift({
+                            id: newID,
+                            title: self.theNewPost.title
+                        })
+                        
+                        console.log('newID is ' + newID);
+                        self.theNewPost.title = '';
+                        self.theNewPost.content = '';   
                     }
-                })
-
-                this.dataList.unshift({
-                    id: newID,
-                    title: this.theNewPost.title
-                })
-
-                console.log('newID' + newID + '\n' + 'newTitle' + 
-                    this.theNewPost.title);
-
-                this.theNewPost.title = '';
-                this.theNewPost.content = '';
-                
-                
-                
+                })                
             },
             closeLogin: function () {
                 $('#regModal').modal('hide');
