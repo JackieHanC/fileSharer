@@ -81,12 +81,12 @@
             <!-- </div> -->
         </div>
         <div class="eight wide column" :style="singlePost">
-            <showingPost :value="thePost"></showingPost>
+            <showingPost :value="thePost" :getUsername="username"></showingPost>
         </div>
         <div class="four wide column"></div>
         <div class="ui small modal" id="regModal">
             <div class="content">
-                <login v-on:close="closeLogin"></login>
+                <login v-on:close="closeLogin" ></login>
             </div>
         </div>
 
@@ -161,6 +161,9 @@
             }
         },
         methods: {
+            getUsername: function() {
+                return this.username;
+            },
             deepcopy: function (oldObj) {
                 var newObj;
                 var strObj = JSON.stringify(oldObj);
@@ -231,7 +234,8 @@
                 }).then(function(response) {
 
                     if (response.data['code'] == 0) {
-                        self.thePost = response.data['post']
+                        self.thePost = response.data['post'];
+                        self.thePost['id'] = postID;
                         console.log(response.data['post'].title);
                         console.log(response.data['post'].content);
                         

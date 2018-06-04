@@ -32,7 +32,7 @@
 
 <script>
 export default {
-    props: ['value'],
+    props: ['value', 'getUsername'],
     data() {
         return {
             commentContent: ''
@@ -46,17 +46,25 @@ export default {
             // })
             $('#commentBtn').popup('hide')
             var self = this
-            // this.$ajax({
-            //     method: 'post',
-            //     url: 'api/uploadComment',
-            //     data: {
-            //         username: this.username,
-            //         content: this.commentContent
-            //     },
-            //     timeout: 3000
-            // }).then(function(response) {
-
-            // })
+            this.$ajax({
+                method: 'post',
+                url: 'api/uploadComment',
+                data: {
+                    username: this.getUsername,
+                    content: this.commentContent,
+                    postid: this.value.id
+                },
+                timeout: 3000
+            }).then(function(response) {
+                if (response.data['code'] === 0) {
+                    self.value.comments.push({
+                        id: response.data['id'],
+                        user: self.getUsername,
+                        content: self.commentContent
+                    })
+                    self.commentContent = ''
+                }
+            })
         }
     },
     mounted() {
