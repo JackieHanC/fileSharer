@@ -4,7 +4,9 @@ var router = express.Router()
 
 
 
-// 产生四位随机数，字母与数字的混合
+/*
+产生四位随机数，字母与数字的混合
+*/
 function generate_code() 
 {
 	var ecode = ""
@@ -21,7 +23,9 @@ function generate_code()
 
 
 
-// 检查用户名是否存在
+/*
+检查用户名是否存在
+*/
 router.use('/checkUserExistence', function(req,res){
 	var MongoClient = require('mongodb').MongoClient;
 	var url = "mongodb://localhost:27017/filesharer";
@@ -61,8 +65,9 @@ router.use('/checkUserExistence', function(req,res){
 
 })
 
-
-// 将验证码发送到用户邮箱
+/*
+将验证码发送到用户邮箱
+*/
 router.use('/sendMailCode', function(req, res){
 	console.log('进入 sendMailCode 路由，添加一个参数作为验证码');
 	var nodemailer = require('nodemailer');
@@ -123,8 +128,10 @@ router.use('/sendMailCode', function(req, res){
 })
 
 
-//检查用户情况，是否存在，密码是否正确 
-//向前端返回code：0表示用户不存在,1表示密码不正确，-1表示正常
+/*
+检查用户情况，是否存在，密码是否正确 
+向前端返回code：0表示用户不存在,1表示密码不正确，-1表示正常
+*/
 router.use('/searchUser', function(req, res) {
 
     console.log("检查用户情况，是否存在，密码是否正确");
@@ -165,7 +172,9 @@ router.use('/searchUser', function(req, res) {
 
 })
 
-
+/*
+注册函数
+*/
 router.use('/signUp', function (req, res) {
 	var MongoClient = require('mongodb').MongoClient;
 	var url = "mongodb://localhost:27017/filesharer";
@@ -226,6 +235,9 @@ router.use('/signUp', function (req, res) {
 
 })
 
+/*
+获取帖子列表
+*/
 router.use('/getDataList', function (req, res) {
 
 	console.log('准备读取帖子信息');
@@ -363,12 +375,71 @@ router.use('/getPostByID', function (req, res) {
 		    	code: retcode,// 0 for success, 1 for error
 			    post: returnobj
 			})
-
-
 			console.log(res['post']);
-
 		});		
 		db.close();
+
+	});
+
+})
+
+/*
+添加新评论
+先根据postid找到对应的帖子，然后修改comment字段
+*/
+router.use('/uploadComment', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var return_value;		// 0 for success, else 1
+	var retid = -1;			// 返回值（评论id）
+	var postid = Number(req.body.postid);
+	var username = req.body.username;
+	var content = req.body.content;
+
+	console.log("********************************* uploadComment *********************************");
+	console.log("GET a postID : " + postid);
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+	    // 根据postid找到相关的帖子
+		dbo.collection("bbs").find({bbs_id:postid}).toArray(function(err, ress) {
+			if (err) throw err;
+			var returnobj = {}
+			var retcode = 1;
+
+			if(ress.length == 0){		// 找不到对应的帖子
+				retcode = 1;
+			}
+			else{
+				console.log('已找到对应帖子');			
+
+				// 获取评论的具体内容、评论数量
+				var comment = ress[0]['comment'];
+				var tot_comment = Number(comment.length);
+				retid = tot_comment;
+				// 插入一条新评论
+				var insertone = {'id': tot_comment, 'user': username, 'content': content};
+				comment.push(insertone);
+				var updateStr = {$set: { "comment" : comment }};
+			    dbo.collection("bbs").updateOne({"bbs_id": postid}, updateStr, function(err, res) {
+			        if (err) throw err;
+			        console.log("comment信息更新成功");
+			        db.close();
+			    });
+
+				retcode = 0;
+			}
+
+			res.json({
+		    	code: retcode,// 0 for success, 1 for error
+			    id: retid
+			})
+		});		
 
 	});
 
