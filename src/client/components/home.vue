@@ -86,7 +86,7 @@
         <div class="four wide column"></div>
         <div class="ui small modal" id="regModal">
             <div class="content">
-                <login></login>
+                <login v-on:close="closeLogin"></login>
             </div>
         </div>
 
@@ -296,6 +296,9 @@
                 
                 
                 
+            },
+            closeLogin: function () {
+                $('#regModal').modal('hide');
             }
         },
         watch:{

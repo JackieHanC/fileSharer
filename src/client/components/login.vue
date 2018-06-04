@@ -98,7 +98,7 @@ export default {
                     // TODO. cookie, jump over
                     self.$setCookie('username', self.username, 1000*60);
                     self.$router.push({path: '/'});
-                    
+                    self.$emit('close', 'close')
                 })
             }
         },
