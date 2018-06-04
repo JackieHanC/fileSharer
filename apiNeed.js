@@ -81,3 +81,14 @@ receive: {
     code: 0,// 0 for success, 1 for error
     newPostID: n // ID for the newly uploaded Post
 }
+
+// name: /uploadComment
+send: {
+    username: '',
+    content: ''
+}
+
+receive: {
+    code: 0 // 0 for success 1 for error
+    id: n // comment id in this post
+}
