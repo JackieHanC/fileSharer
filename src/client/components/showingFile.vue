@@ -5,12 +5,11 @@
                 <div class="header"> {{ value.title }}</div>
             </div>
             <div class="content">
-                <p>{{ value.content }}</p>
+                <p>{{ value.intr }}</p>
             </div>
             <div class="ui bottom attached buttons">
                 <div class="ui button" id="commentBtn">comment</div>
-                <div class="ui button">like</div>
-                <!-- <div class="ui right floated positive button" @click="collectPost">收藏</div> -->
+                <div class="ui button">download</div>
             </div>
             <div class="ui custom popup bottom left transition hidden" id="insertComment">
                 <!-- <input type="text" name="" id=""> -->
@@ -66,9 +65,6 @@ export default {
                     self.commentContent = ''
                 }
             })
-        },
-        collectPost: function() {
-
         }
     },
     mounted() {
