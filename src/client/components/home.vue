@@ -1,15 +1,26 @@
 <template>
     <div class="ui fluid grid">
-        
-        <div class="ui fixed borderless fluid primary menu">
+        <div class="ui fixed borderless fluid secondary pointing menu">
             <a class="item" @click="returnHome">
                 <h2>FileSharer</h2>
             </a>
+            <a :class=itemValue1 @click="activeBBS" >
+                BBS
+            </a>
+            <a :class=itemValue2 @click="activeFile">
+                文件
+            </a>
+        <!-- </div> -->
+            <!-- <div class = "item">
+                <select class="ui search dropdown">
+                    <option></option>
+                </select>
+            </div> -->
             <div class="item">
-                    <div class="ui icon input" id = "searchinfo">
-                        <input type="text" placeholder="搜索..." v-model="searchinfo"/>
-                        <i class="search link icon" @click="search"></i>
-                    </div>
+                <div class="ui icon input" id = "searchinfo">
+                    <input type="text" placeholder="搜索..." v-model="searchinfo"/>
+                    <i class="search link icon" @click="search"></i>
+                </div>
             </div>
             <div class="right menu" :style="loginInputs">
                 <div class="item">
@@ -32,15 +43,13 @@
                             {{ buttonValue1 }}
                     </button>
                 </div>
-            <div class="item">
+                <div class="item">
                     <button id="sendButton" 
-                            :class="codeButton" 
-                            @click="register">
-                            {{ buttonValue2 }}
+                                :class="codeButton" 
+                                @click="register">
+                                {{ buttonValue2 }}
                     </button>
-                </div> 
-                
-                
+                </div>   
             </div>
             <div class="right menu" :style="loginStatus">
                 <div class="ui dropdown item">
@@ -53,6 +62,7 @@
                 </div>
             </div>
         </div>
+
         <div class="row" style="height: 80px;"></div>
         
         <!-- <div class="ui divider"></div> -->
@@ -82,6 +92,17 @@
         </div>
         <div class="eight wide column" :style="singlePost">
             <showingPost :value="thePost" :getUsername="username"></showingPost>
+        </div>
+        <div class="eight wide column" :style="singleFile">
+            <showingFile :value="theFile" :getUsername="username"></showingFile>
+        </div>
+        <div class="eight wide column" :style="fileList">
+            <div class="ui fluid card" style="cursor: pointer;" v-for="it in fileDataList" :key="it.id" @click="showFile(it.id)">
+                <div class="content">
+                    <h3>{{it.title}}</h3>
+                    <div class="ui right floated positive button" @click="downloadFile">下载</div>
+                </div>
+            </div>
         </div>
         <div class="four wide column"></div>
         <div class="ui small modal" id="regModal">
@@ -130,12 +151,15 @@
 <script>
     import login from './login.vue'
     import showingPost from './showingPost.vue'
+    import showingFile from './showingFile.vue'
     export default {
         data() {
             return {
                 codeButton: "ui primary button",
                 buttonValue1: "登录",
                 buttonValue2: "注册",
+                itemValue1: "item active",
+                itemValue2: "item",
                 usernameIcon: "",
                 pwdIcon: "",
                 username: "",
@@ -146,18 +170,23 @@
                 loginStatus: "",
                 searchinfo: "",
                 dataList: [],
+                fileDataList: [],
                 mainList: "",
                 singlePost: "display: none;",
+                singleFile: "display: none;",
+                fileList: "display: none",
                 thePost: {
                     title: "",
                     content: ""
+                },
+                theFile: {
+                    title: "",
+                    intr:"",
                 },
                 theNewPost: {
                     title:'',
                     content: ''
                 }
-                // dataList: []
-
             }
         },
         methods: {
@@ -223,6 +252,8 @@
             showPost: function (postID) {
                 this.mainList = "display: none;";
                 this.singlePost = "";
+                this.singlePost = "display: none";
+                this.fileList = "display: none;";
                 var self = this;
                 this.$ajax({
                     method: 'post',
@@ -250,10 +281,59 @@
 
                 })
             },
-            returnHome: function() {
+            showFile: function (fileID) {
+                this.mainList = "display: none;";
+                this.singlePost = "display: none;";
+                this.fileList = "";
+                this.singleFile = "display: none";
+                var self = this;
+                this.$ajax({
+                    method: 'post',
+                    url: 'api/getFileByID',
+                    data: {
+                        ID: fileID
+                    },
+                    timeout: 3000
+                }).then(function(response) {
 
+                    if (response.data['code'] == 0) {
+                        self.theFile = response.data['file'];
+                        self.theFile['id'] = fileID;
+                        console.log(response.data['file'].title);
+                        console.log(response.data['file'].intr);
+                        console.log(self.theFile.title);    
+                        console.log('code = 0');
+                        
+                    } else {
+                        // it should not happen
+                    }
+
+                })
+            },
+            downloadFile: function () {
+                
+            },
+            activeBBS: function(){
+                this.itemValue1 = "item active";
+                this.itemValue2 = "item";
+                this.mainList = "";
+                this.singlePost = "display: none;";
+                this.singleFile = "display: none";
+                this.fileList = "display: none;";
+            },
+            activeFile: function(){
+                this.itemValue1 = "item";
+                this.itemValue2 = "item active";
+                this.mainList = "display: none";
+                this.singlePost = "display: none;";
+                this.singleFile = "display: none";
+                this.fileList = "";
+            },
+            returnHome: function(){
                 this.mainList = '';
                 this.singlePost = 'display: none;';
+                this.singleFile = "display: none";
+                this.fileList = "display: none";
             },
             newpost: function(){
                 //this.buttonValue1 = "gg";
@@ -387,7 +467,8 @@
         },
         components: {
             login,
-            showingPost
+            showingPost,
+            showingFile,
         }
     }
     
