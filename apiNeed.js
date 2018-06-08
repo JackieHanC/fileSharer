@@ -101,9 +101,32 @@ send: {
 
 receive: {
     fileList: {
-        id: '',
-        titile: ''
+        id: n,
+        titile: '',
+        code: 0
     }
+}
+
+// name: /getMajor      
+// 为下拉框提供专业信息
+send: {
+}
+
+receive: {
+    majorlist: [],       // 一个数组
+    code: 0     // 0代表success
+}
+
+// name: /searchCourse    
+// 提供专业信息和关键词，实时返回搜索到的课程标题
+send: {
+    major: '',
+    key: ''
+}
+
+receive: {
+    courselist: [],      // 一个数组
+    code: 0
 }
 
 
