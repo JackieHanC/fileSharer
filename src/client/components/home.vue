@@ -170,7 +170,7 @@
                 loginStatus: "",
                 searchinfo: "",
                 dataList: [],
-                fileDataList: [],
+                fileList: [],
                 mainList: "",
                 singlePost: "display: none;",
                 singleFile: "display: none;",
@@ -252,7 +252,6 @@
             showPost: function (postID) {
                 this.mainList = "display: none;";
                 this.singlePost = "";
-                this.singlePost = "display: none";
                 this.fileList = "display: none;";
                 var self = this;
                 this.$ajax({
@@ -462,7 +461,17 @@
                 console.log(self.dataList.length);
                 
             })
-            console.log(self.dataList.length);
+            
+            this.$ajax({
+                url: 'api/getFileList',
+                method: 'post',
+                data: {
+                    idBegin: 0
+                },
+                timeout: 3000
+            }).then(function(response) {
+                self.fileList = [].concat(response.data['fileList'])
+            })
             
         },
         components: {

@@ -1,6 +1,7 @@
 dist
 node_modules
 npm-debug.log
+semantic
 
 package-lock.json
 *DS_Store

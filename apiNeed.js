@@ -94,35 +94,48 @@ receive: {
     id: n // comment id in this post
 }
 
-// name: /getFileByID
+// name: /getFileList
 send: {
-    fileid: '',
+    idBegin: 0
 }
 
 receive: {
-    code: 0 // 0 for success 1 for error
-    title: '',
-    major: '',
-    course: '',
-    intr: '',
-    path: ''
+    fileList: {
+        id: '',
+        titile: ''
+    }
 }
 
-// name: /searchFile
-send: {
-    major: '',
-    course: ''
-}
 
-receive: {
-    code: 0 // 0 for success 1 for error
-    fileDataList: [
-    {
-        id: x, 
-        title: '',
-        intr: '',
-        path: ''
-    },
-    //...
-    ]
-}
+// // name: /getFileByID
+// send: {
+//     fileid: '',
+// }
+
+// receive: {
+//     code: 0 // 0 for success 1 for error
+//     title: '',
+//     major: '',
+//     course: '',
+//     intr: '',
+//     path: ''
+// }
+
+// // name: /searchFile
+// send: {
+//     major: '',
+//     course: ''
+// }
+
+// receive: {
+//     code: 0 // 0 for success 1 for error
+//     fileDataList: [
+//     {
+//         id: x, 
+//         title: '',
+//         intr: '',
+//         path: ''
+//     },
+//     //...
+//     ]
+// }
