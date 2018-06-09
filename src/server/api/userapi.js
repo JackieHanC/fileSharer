@@ -444,4 +444,64 @@ router.use('/uploadComment', function (req, res) {
 
 })
 
+/*
+返回数据库中现有的专业列表
+*/
+router.use('/getMajor', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var return_value;		// 0 for success, else 1
+
+	console.log("********************************* getMajor *********************************");
+
+	var insertobj={};		// 要插入的表项
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+
+		dbo.collection("majorcourse").find().toArray(function(err, ress) {
+	        if (err) throw err;
+	        var returnobj = {}
+	        var retcode = 1;
+	        var retarr = [];
+
+	        if(ress.length == 0){
+	            retcode = 1;
+	        }
+	        else{
+	            retcode = 0;
+	            for(var i=0;i<ress.length;i++){
+	                var flag = 0;
+	                // 查找是否有重复项
+	                for(var j=0;j<retarr.length;j++){
+	                    if(ress[i]['major'] == retarr[j]){
+	                        flag = 1;
+	                        break;
+	                    }
+	                }
+	                if(flag == 0){
+	                    retarr.push(ress[i]['major']);
+	                }
+	            }
+	            console.log("已查到课程列表：");
+	            console.log(retarr);
+	        }
+
+			res.json({
+		    	code: retcode,// 0 for success, 1 for error
+			    majorlist: retarr
+			})
+			db.close();
+		});		
+		
+
+	});
+
+})
+
 module.exports = router
