@@ -101,11 +101,11 @@
                 <div class="content">
                     <div class="ui form">
                         <div class="fluid inline fields">
-                            <div class="eight wide field">
+                            <div class="fluid inline field">
                                 <label>专业</label>
-                                <div class="ui search selection dropdown" id="majorDropdown">
+                                <div class="ui float search selection dropdown" id="majorDropdown" :onchange="selectMajor">
                                     <!-- <option value=""></option> -->
-                                    <input type="hidden" v-model="selectedMajor">
+                                    <input type="text" v-model="selectedMajor">
                                     
                                     <i class="dropdown icon"></i>
                                     <div class="default text">搜索专业</div>
@@ -114,9 +114,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="eight wide field">
+                            <div class="fluid inline field">
                                 <label>课程</label>
-                                <div class="ui search selection dropdown" id="courseDropdown">
+                                <div class="ui float search selection dropdown" id="courseDropdown">
                                     <input type="hidden" name="kc">
                                     <i class="dropdown icon"></i>
                                     <div class="default text">搜索课程名</div>
@@ -126,9 +126,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="two wide field">
+                            <div class="right floated inline field">
                                 <!-- <label></label> -->
-                                <div class="ui button">筛选</div>
+                                <div class="ui right floated button" @click="tmp">筛选</div>
                             </div>
                         
                         </div>
@@ -352,6 +352,17 @@
             },
             downloadFile: function () {
                 
+            },
+            tmp: function() {
+
+                console.log($('#majorDropdown').dropdown('get text'));
+            },
+            selectMajor: function() {
+                var self = this
+                this.$ajax({
+                    method: 'post',
+                    url: 'api/'
+                })
             },
             activeBBS: function(){
                 this.bbsPageItem = "item active";
