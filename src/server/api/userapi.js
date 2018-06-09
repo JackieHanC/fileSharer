@@ -504,4 +504,43 @@ router.use('/getMajor', function (req, res) {
 
 })
 
+
+/*
+按起始序号获取文件列表
+*/
+router.use('/getFileList', function (req, res) {
+
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+	var idBegin = req.body.idBegin;
+
+	var data=[];
+
+	console.log("********************************* getFileList *********************************");
+
+	MongoClient.connect(url,  {useNewUrlParser: true}, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+		dbo.collection("majorcourse").find({}, {limit: 30, skip:idBegin}).toArray(function(err, ress) {
+			if (err) throw err;
+			for(var i=0;i<ress.length;++i){
+				var obj={"id":ress[i]["file_id"],"title":ress[i]["intro"], code: 0};
+				data.push(obj);
+			}
+
+			console.log(data);
+			console.log('文件信息读取完毕');
+
+			res.json({
+				fileList:data
+			})
+
+			db.close();
+		});
+	});
+
+
+})
+
 module.exports = router
