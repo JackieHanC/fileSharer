@@ -4,10 +4,10 @@
             <a class="item" @click="returnHome">
                 <h2>FileSharer</h2>
             </a>
-            <a :class=itemValue1 @click="activeBBS" >
+            <a :class="bbsPageItem" @click="activeBBS" >
                 BBS
             </a>
-            <a :class=itemValue2 @click="activeFile">
+            <a :class="filePageItem" @click="activeFile">
                 文件
             </a>
         <!-- </div> -->
@@ -96,8 +96,8 @@
         <div class="eight wide column" :style="singleFile">
             <showingFile :value="theFile" :getUsername="username"></showingFile>
         </div>
-        <div class="eight wide column" :style="fileList">
-            <div class="ui fluid card" style="cursor: pointer;" v-for="it in fileDataList" :key="it.id" @click="showFile(it.id)">
+        <div class="eight wide column" :style="fileListStyle">
+            <div class="ui fluid card" style="cursor: pointer;" v-for="it in fileList" :key="it.id" @click="showFile(it.id)">
                 <div class="content">
                     <h3>{{it.title}}</h3>
                     <div class="ui right floated positive button" @click="downloadFile">下载</div>
@@ -158,8 +158,8 @@
                 codeButton: "ui primary button",
                 buttonValue1: "登录",
                 buttonValue2: "注册",
-                itemValue1: "item active",
-                itemValue2: "item",
+                bbsPageItem: "item active",
+                filePageItem: "item",
                 usernameIcon: "",
                 pwdIcon: "",
                 username: "",
@@ -174,7 +174,7 @@
                 mainList: "",
                 singlePost: "display: none;",
                 singleFile: "display: none;",
-                fileList: "display: none",
+                fileListStyle: "display: none",
                 thePost: {
                     title: "",
                     content: ""
@@ -252,7 +252,8 @@
             showPost: function (postID) {
                 this.mainList = "display: none;";
                 this.singlePost = "";
-                this.fileList = "display: none;";
+                this.singleFile = 'display: none;';
+                this.fileListStyle = "display: none;";
                 var self = this;
                 this.$ajax({
                     method: 'post',
@@ -283,7 +284,7 @@
             showFile: function (fileID) {
                 this.mainList = "display: none;";
                 this.singlePost = "display: none;";
-                this.fileList = "";
+                this.fileListStyle = "";
                 this.singleFile = "display: none";
                 var self = this;
                 this.$ajax({
@@ -313,26 +314,28 @@
                 
             },
             activeBBS: function(){
-                this.itemValue1 = "item active";
-                this.itemValue2 = "item";
+                this.bbsPageItem = "item active";
+                this.filePageItem = "item";
                 this.mainList = "";
                 this.singlePost = "display: none;";
                 this.singleFile = "display: none";
-                this.fileList = "display: none;";
+                this.fileListStyle = "display: none;";
             },
             activeFile: function(){
-                this.itemValue1 = "item";
-                this.itemValue2 = "item active";
+                this.bbsPageItem = "item";
+                this.filePageItem = "item active";
                 this.mainList = "display: none";
                 this.singlePost = "display: none;";
                 this.singleFile = "display: none";
-                this.fileList = "";
+                this.fileListStyle = "";
             },
             returnHome: function(){
+                this.bbsPageItem = 'item active';
+                this.filePageItem = 'item';
                 this.mainList = '';
                 this.singlePost = 'display: none;';
                 this.singleFile = "display: none";
-                this.fileList = "display: none";
+                this.fileListStyle = "display: none";
             },
             newpost: function(){
                 //this.buttonValue1 = "gg";
