@@ -11,9 +11,11 @@
   "author": "Konata9 <maochichen@163.com>",
   "license": "MIT",
   "dependencies": {
+    "ajv": "^6.5.0",
     "babel-runtime": "^6.23.0",
     "md5": "^2.2.1",
     "mongodb": "^3.1.0-beta4",
+    "multiparty": "^4.1.4",
     "mysql": "^2.15.0",
     "nodemailer": "^4.6.4",
     "npm": "^6.0.1",
@@ -22,6 +24,7 @@
     "semantic-ui-css": "^2.3.1",
     "v-tooltip": "^2.0.0-rc.32",
     "vue": "^2.5.13",
+    "vue-file-upload": "^0.1.12",
     "vue-hot-reload-api": "^2.1.0",
     "vue-html-loader": "^1.2.4",
     "vue-router": "^2.8.1"

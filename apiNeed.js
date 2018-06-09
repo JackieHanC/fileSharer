@@ -141,6 +141,19 @@ receive: {
 }
 
 
+//name: /uploadFile
+
+send: {
+    title: '',
+    major: '',
+    course: '',
+    file: ''// 二进制文件
+}
+
+receive: {
+    code: 0
+    id: 0
+}
 
 // // name: /getFileByID
 // send: {

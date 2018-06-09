@@ -57,6 +57,7 @@
                     <i class="dropdown icon"></i>
                     <div class="menu">
                         <a class="item" @click="newpost">新建帖子</a>
+                        <a class="item" @click="newFile">上传文件</a>
                         <a class="item" @click="logOut">注销</a>
                     </div>
                 </div>
@@ -92,9 +93,6 @@
         </div>
         <div class="eight wide column" :style="singlePost">
             <showingPost :value="thePost" :getUsername="username"></showingPost>
-        </div>
-        <div class="eight wide column" :style="singleFile">
-            <showingFile :value="theFile" :getUsername="username"></showingFile>
         </div>
         <div class="eight wide column" :style="fileListStyle">
             <div class="ui fluid card">
@@ -135,7 +133,7 @@
                     </div>
                 </div>
             </div>
-            <div class="ui fluid card" style="cursor: pointer;" v-for="it in fileList" :key="it.id" @click="showFile(it.id)">
+            <div class="ui fluid card" v-for="it in fileList" :key="it.id">
                 <div class="content">
                     <div style="float: left;"><h3>{{it.title}}</h3> </div>
                     <div class="ui right floated positive button" @click="downloadFile">下载</div>
@@ -146,6 +144,12 @@
         <div class="ui small modal" id="regModal">
             <div class="content">
                 <login v-on:close="closeLogin" ></login>
+            </div>
+        </div>
+
+        <div class="ui modal" id="newFileModal">
+            <div class="content">
+                <uploadFileModal></uploadFileModal>
             </div>
         </div>
 
@@ -187,9 +191,9 @@
     
 </template>
 <script>
-    import login from './login.vue'
-    import showingPost from './showingPost.vue'
-    import showingFile from './showingFile.vue'
+    import login  from './login.vue'
+    import showingPost  from './showingPost.vue'
+    import uploadFileModal  from "./uploadFileModal.vue";
     export default {
         data() {
             return {
@@ -214,7 +218,6 @@
                 selectedMajor: '',
                 mainList: "",
                 singlePost: "display: none;",
-                singleFile: "display: none;",
                 fileListStyle: "display: none",
                 thePost: {
                     title: "",
@@ -293,7 +296,6 @@
             showPost: function (postID) {
                 this.mainList = "display: none;";
                 this.singlePost = "";
-                this.singleFile = 'display: none;';
                 this.fileListStyle = "display: none;";
                 var self = this;
                 this.$ajax({
@@ -322,37 +324,11 @@
 
                 })
             },
-            showFile: function (fileID) {
-                this.mainList = "display: none;";
-                this.singlePost = "display: none;";
-                this.fileListStyle = "";
-                this.singleFile = "display: none";
-                var self = this;
-                this.$ajax({
-                    method: 'post',
-                    url: 'api/getFileByID',
-                    data: {
-                        ID: fileID
-                    },
-                    timeout: 3000
-                }).then(function(response) {
-
-                    if (response.data['code'] == 0) {
-                        self.theFile = response.data['file'];
-                        self.theFile['id'] = fileID;
-                        console.log(response.data['file'].title);
-                        console.log(response.data['file'].intr);
-                        console.log(self.theFile.title);    
-                        console.log('code = 0');
-                        
-                    } else {
-                        // it should not happen
-                    }
-
-                })
-            },
             downloadFile: function () {
                 
+            },
+            newFile: function() {
+                $('#newFileModal').modal('show');
             },
             getFileListByKeys: function() {
 
@@ -367,7 +343,12 @@
                     },
                     timeout: 3000
                 }).then(function(response) {
-                    
+                    if (response.data['code'] === 0) {
+                        self.fileList = [].concat(response.data['fileList'])
+                    } else {
+                        console.log('getFileListByKeys code error');
+                        
+                    }
                 })
             },
             selectMajor: function() {
@@ -385,8 +366,7 @@
                     if (response.data['code'] === 0) {
                         self.courseList = [].concat(response.data['courselist'])
                     } else {
-                        console.log('get course code error');
-                        
+                        console.log('get course code error');    
                     }
                 })
             },
@@ -395,7 +375,7 @@
                 this.filePageItem = "item";
                 this.mainList = "";
                 this.singlePost = "display: none;";
-                this.singleFile = "display: none";
+                
                 this.fileListStyle = "display: none;";
             },
             activeFile: function(){
@@ -403,7 +383,7 @@
                 this.filePageItem = "item active";
                 this.mainList = "display: none";
                 this.singlePost = "display: none;";
-                this.singleFile = "display: none";
+                
                 this.fileListStyle = "";
             },
             returnHome: function(){
@@ -411,7 +391,7 @@
                 this.filePageItem = 'item';
                 this.mainList = '';
                 this.singlePost = 'display: none;';
-                this.singleFile = "display: none";
+                
                 this.fileListStyle = "display: none";
             },
             newpost: function(){
@@ -571,10 +551,8 @@
                 if (response.data['code'] === 0) {
                     self.majorList = [].concat(response.data['majorlist'])
                     console.log('major list length ' + self.majorList.length);
-                    
                 } else {
-                    console.log('getMajor code error');
-                    
+                    console.log('getMajor code error');  
                 }
             })
             
@@ -582,7 +560,7 @@
         components: {
             login,
             showingPost,
-            showingFile,
+            uploadFileModal
         }
     }
     

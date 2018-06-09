@@ -644,4 +644,33 @@ router.use('/getFileListByKeys', function (req, res) {
 
 })
 
+var multiparty = require('multiparty')
+router.use('/test', function (req, res) {
+	// console.log(req.Payload);
+	// console.log(req['Content-Type']);
+	var form = new multiparty.Form();
+	console.log(__dirname);
+	form.encoding = 'utf-8'
+	form.uploadDir = __dirname + '/uploads'
+
+	form.maxFileSize = 2 * 1024 * 1024
+
+	form.parse(req, function(err, fields, files) {
+		if(err) {
+			console.log('错误');
+			console.log(err);
+			
+			return;
+		}
+
+		console.log(files['txt'].originalFilename);
+		
+		
+	})
+	
+	
+	
+	
+})
+
 module.exports = router
