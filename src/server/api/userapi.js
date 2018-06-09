@@ -582,7 +582,7 @@ router.use('/getCourse', function (req, res) {
 
 			res.json({
 		    	code: retcode,// 0 for success, 1 for error
-			    majorlist: retarr
+			    courselist: retarr
 			})
 			db.close();
 		});		
