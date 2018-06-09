@@ -91,7 +91,7 @@ function create_studydata(db, dbo, is_delete){
 
 
     // 插入一条初始数据
-    var initobj = { "file_id": 0, "course":'test', "major":"信科", "filename":'1.jpg', "intro":'初始测试文件', "path":'~fileSharer/src/server/public/StudyFile/0.jpg'};
+    var initobj = { "file_id": 0, "course":'test', "major":"信科", "filename":'0.jpg', "intro":'初始测试文件', "path":'~fileSharer/src/server/public/StudyFile/0.jpg'};
     var whereStr = {"filename":'1.jpg'};  // 查询条件（用于删除）
     dbo.collection("studydata").insertOne(initobj, function(err, res) {
         if (err) throw err;

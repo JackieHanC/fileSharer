@@ -488,7 +488,7 @@ router.use('/getMajor', function (req, res) {
 	                    retarr.push(ress[i]['major']);
 	                }
 	            }
-	            console.log("已查到课程列表：");
+	            console.log("已查到专业列表：");
 	            console.log(retarr);
 	        }
 
@@ -512,7 +512,7 @@ router.use('/getFileList', function (req, res) {
 
 	var MongoClient = require('mongodb').MongoClient;
 	var url = "mongodb://localhost:27017/filesharer";
-	var idBegin = 0;
+	var idBegin = req.body.idBegin;
 
 	var data=[];
 
@@ -541,6 +541,54 @@ router.use('/getFileList', function (req, res) {
 	    });
 	});
 
+
+})
+
+/*
+返回数据库中现有的某专业的课程列表
+*/
+router.use('/getCourse', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var return_value;		// 0 for success, else 1
+	var major = req.body.major
+
+	console.log("********************************* getCourse *********************************");
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+
+		dbo.collection("majorcourse").find({"major": major}).toArray(function(err, ress) {
+	        if (err) throw err;
+	        var retcode = 1;
+	        var retarr = [];
+
+	        if(ress.length == 0){
+	            retcode = 1;
+	        }
+	        else{
+	            retcode = 0;
+	            for(var i=0;i<ress.length;i++){
+	                    retarr.push(ress[i]['course']);
+	            }
+	            console.log("已查到课程列表：");
+	            console.log(retarr);
+	        }
+
+			res.json({
+		    	code: retcode,// 0 for success, 1 for error
+			    courselist: retarr
+			})
+			db.close();
+		});		
+		
+
+	});
 
 })
 
