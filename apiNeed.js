@@ -164,6 +164,16 @@ receive: {
     id: 0
 }
 
+//name: getUrlByID
+send: {
+    id: 0
+}
+
+receive: {
+    code: 0,
+    url: ''
+}
+
 // // name: /getFileByID
 // send: {
 //     fileid: '',

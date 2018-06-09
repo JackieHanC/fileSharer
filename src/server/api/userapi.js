@@ -714,6 +714,9 @@ router.use('/uploadFile', function (req, res) {
 	});	
 })
 
+/*
+修改文件信息
+*/
 router.use('/updataFileInfo', function (req, res) {
 	var MongoClient = require('mongodb').MongoClient;
 	var url = "mongodb://localhost:27017/filesharer";
@@ -757,6 +760,49 @@ router.use('/updataFileInfo', function (req, res) {
 		    	code: retcode,// 0 for success, 1 for error
 			    id: id
 			})
+		});		
+
+	});
+
+})
+
+/*
+根据ID返回文件的路径
+*/
+router.use('/getUrlByID', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var retcode = 1;		// 0 for success, else 1
+	var id = Number(req.body.id);
+
+	console.log("********************************* getUrlByID *********************************");
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+	    // 根据 id 找到相关的文件
+		dbo.collection("studydata").find({"file_id":id}).toArray(function(err, ress) {
+			if (err) throw err;
+
+			if(ress.length == 0){		// 找不到对应的帖子
+				retcode = 1;
+			}
+			else{
+				retcode = 0;
+				console.log('已找到对应文件的信息');			
+
+				// 修改文件信息
+				res.json({
+			    	code: retcode,// 0 for success, 1 for error
+				    url: ress[0]['path']
+				})
+			    db.close();
+
+			}
 		});		
 
 	});
