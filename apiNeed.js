@@ -142,12 +142,21 @@ receive: {
 
 
 //name: /uploadFile
-
 send: {
+    file: ''// 二进制文件
+}
+
+receive: {
+    code: 0
+    id: 0
+}
+
+//name: updateFileInfo
+send: {
+    id: 0,
     title: '',
     major: '',
-    course: '',
-    file: ''// 二进制文件
+    course: ''
 }
 
 receive: {
