@@ -620,7 +620,7 @@ router.use('/getFileListByKeys', function (req, res) {
 	        var retarr = [];
 
 	        if(ress.length == 0){
-	            retcode = 1;
+	            retcode = 0;
 	        }
 	        else{
 	            retcode = 0;
