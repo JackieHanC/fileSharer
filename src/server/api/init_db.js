@@ -31,11 +31,13 @@ mongodb 部分语句：
 
 DB各个表的项以及项的类型
 > db.bbs.find()
-{ "_id" : ObjectId("5b02c2f487f25e4685809194"), "bbs_id" : "0", "user_name" : "715811763@pku.edu.cn", "date" : "2018-05-21", "title": 'First BBS', "content" : "大家好这是第一条帖子", "comment" : [ "自己给自己评论一下吧" ], "comment_user" : [ "715811763@pku.edu.cn" ] }
+{ "_id" : ObjectId("5b1b47dc2f64f0077b639f88"), "bbs_id" : 0, "user_name" : "715811763@pku.edu.cn", "date" : "2018-05-21", "like" : 0, "title" : "First BBS", "content" : "大家好这是第1条帖子", "comment" : [ { "id" : 0, "user" : "715811763@pku.edu.cn", "content" : "自己给自己评论一下吧" } ] }
 > db.studydata.find()
-{ "_id" : ObjectId("5b02c2f487f25e4685809195"), "course" : "test", "major" : "EECS", "filename" : "1.jpg", "intro" : "初始测试文件", "path" : "../public/EECS/1.jpg" }
+{ "_id" : ObjectId("5b1b47dc2f64f0077b639f8c"), "file_id" : 0, "course" : "test", "major" : "信科", "filename" : "1.jpg", "intro" : "初始测试文件", "path" : "~fileSharer/src/server/public/StudyFile/0.jpg" }
 > db.account.find()
-{ "_id" : ObjectId("5b02c2f487f25e4685809193"), "name" : "715811763@pku.edu.cn", "password" : "123456", "userid": 0}
+ "_id" : ObjectId("5b1b47dc2f64f0077b639f87"), "name" : "715811763@pku.edu.cn", "password" : "123456", "userid" : 0 }
+> db.majorcourse.find()
+{ "_id" : ObjectId("5b1b47dc2f64f0077b639f96"), "major" : "信科", "course" : "创新思维与表达艺术" }
 */
 
 var MongoClient = require('mongodb').MongoClient;
@@ -89,7 +91,7 @@ function create_studydata(db, dbo, is_delete){
 
 
     // 插入一条初始数据
-    var initobj = { "course":'test', "major":"EECS", "filename":'1.jpg', "intro":'初始测试文件', "path":'../public/StudyFile/0.jpg'};
+    var initobj = { "file_id": 0, "course":'test', "major":"信科", "filename":'1.jpg', "intro":'初始测试文件', "path":'~fileSharer/src/server/public/StudyFile/0.jpg'};
     var whereStr = {"filename":'1.jpg'};  // 查询条件（用于删除）
     dbo.collection("studydata").insertOne(initobj, function(err, res) {
         if (err) throw err;
