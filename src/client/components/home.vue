@@ -149,7 +149,7 @@
 
         <div class="ui modal" id="newFileModal">
             <div class="content">
-                <uploadFileModal></uploadFileModal>
+                <uploadFileModal v-on:close="closeUpload"></uploadFileModal>
             </div>
         </div>
 
@@ -325,7 +325,7 @@
                 })
             },
             downloadFile: function () {
-                
+                window.open('/a.txt');
             },
             newFile: function() {
                 $('#newFileModal').modal('show');
@@ -448,6 +448,9 @@
             },
             closeLogin: function () {
                 $('#regModal').modal('hide');
+            },
+            closeUpload: function() {
+                $('#newFileModal').modal('hide');
             }
         },
         watch:{

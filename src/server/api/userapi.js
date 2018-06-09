@@ -645,7 +645,7 @@ router.use('/getFileListByKeys', function (req, res) {
 })
 
 var multiparty = require('multiparty')
-router.use('/test', function (req, res) {
+router.use('/uploadFile', function (req, res) {
 	// console.log(req.Payload);
 	// console.log(req['Content-Type']);
 	var form = new multiparty.Form();
@@ -662,8 +662,9 @@ router.use('/test', function (req, res) {
 			
 			return;
 		}
-
-		console.log(files['txt'].originalFilename);
+		console.log(files)
+		console.log(files['file'].originalFilename);
+		console.log(files['course']);
 		
 		
 	})

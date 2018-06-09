@@ -31,10 +31,10 @@
         </div>
         <div class="field">
             <label>文件</label>
-            <input type="file" id="inputFile">
+            <input type="file" id="inputFile" @change="uploadFile">
         </div>
         <div class="field">
-            <div class="ui fluid primary button" @click="uploadFile">上传</div>
+            <div class="ui fluid primary button" @click="updateFileInfo">上传</div>
         </div>
     </div>
 </template>
@@ -42,12 +42,12 @@
 <script>
 
 export default {
-    
     data() {
         return {
             majorList: [],
             courseList: [],
             title: '',
+            fileID: ''
         }
     },
     methods: {
@@ -75,11 +75,12 @@ export default {
             // console.log(f);
             var formdata = new FormData();
             formdata.append('file', f);
-            formdata.append('title', this.title)
-            formdata.append('major', $('#majorDropdown2').dropdown('get text'));
-            formdata.append('course', $('#courseDropdown2').dropdown('get text'))
+            // formdata.append('title', this.title)
+            // formdata.append('major', $('#majorDropdown2').dropdown('get text'));
+            // formdata.append('course', $('#courseDropdown2').dropdown('get text'))
             
-            console.log(formdata.get('txt'));
+
+            
             
             
             var self = this
@@ -94,7 +95,28 @@ export default {
             }).then(function(response) {
                 if (response.data['code'] === 0) {
                     console.log('upload file code 0');
-                    
+                    self.fileID = response.data['id']
+                }
+            })
+        },
+        updateFileInfo: function () {
+            var self = this
+            this.$ajax({
+                method: 'post',
+                url: 'api/updataFileInfo',
+                data: {
+                    id: this.fileID,
+                    major: $('#majorDropdown2').dropdown('get text'),
+                    course: $('#courseDropdown2').dropdown('get text'),
+                    title: this.title
+                },
+                timeout: 3000
+            }).then(function(response) {
+                self.$emit('close')
+                if (response.data['code'] === 0) {
+
+                } else {
+                    console.log('updateFileInfo code error');
                 }
             })
         }
