@@ -592,4 +592,56 @@ router.use('/getCourse', function (req, res) {
 
 })
 
+/*
+寻找某个课程的课程文件
+*/
+router.use('/getFileListByKeys', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var return_value;		// 0 for success, else 1
+	var major = req.body.major
+	var course = req.body.course
+
+	console.log("********************************* getFileListByKeys *********************************");
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+
+		dbo.collection("studydata").find({"major": major, "course": course}).toArray(function(err, ress) {
+			console.log("hhhhhh");
+			console.log(ress.length)
+	        if (err) throw err;
+	        var retcode = 1;
+	        var retarr = [];
+
+	        if(ress.length == 0){
+	            retcode = 1;
+	        }
+	        else{
+	            retcode = 0;
+	            for(var i=0;i<ress.length;i++){
+	            	var insertobj = {"id":ress[i]["file_id"], "title": ress[i]["intro"], code: 0}
+	                retarr.push(insertobj);
+	            }
+	            console.log("已查到课程的文件列表：");
+	            console.log(retarr);
+	        }
+
+			res.json({
+		    	code: retcode,// 0 for success, 1 for error
+			    fileList: retarr
+			})
+			db.close();
+		});		
+		
+
+	});
+
+})
+
 module.exports = router
