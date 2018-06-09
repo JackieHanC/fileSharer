@@ -1,7 +1,8 @@
 var express = require('express')
+var multiparty = require('multiparty')
+var fs = require("fs");
 
 var router = express.Router()
-
 
 
 /*
@@ -644,34 +645,122 @@ router.use('/getFileListByKeys', function (req, res) {
 
 })
 
-var multiparty = require('multiparty')
+
+/*
+上传文件
+*/
 router.use('/uploadFile', function (req, res) {
 	// console.log(req.Payload);
 	// console.log(req['Content-Type']);
-	var form = new multiparty.Form();
-	console.log(__dirname);
-	form.encoding = 'utf-8'
-	form.uploadDir = __dirname + '/uploads'
+	console.log("********************************* getFileListByKeys *********************************");
 
-	form.maxFileSize = 2 * 1024 * 1024
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
 
-	form.parse(req, function(err, fields, files) {
-		if(err) {
-			console.log('错误');
-			console.log(err);
+	var return_value;		// 0 for success, else 1
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+
+		dbo.collection("studydata").find().toArray(function(err, ress) {
+			var now_id = ress.length;		// 当前文件的ID
+	        if (err) throw err;
+	        var retcode = 0;
+
+			var form = new multiparty.Form();
+			//console.log(__dirname);
+			form.encoding = 'utf-8'
+			form.uploadDir = __dirname + '/uploads';
+
+			form.maxFileSize = 100 * 1024 * 1024
+
+			form.parse(req, function(err, fields, files) {
+				if(err) {
+					console.log('错误');
+					console.log(err);
+					return;
+				}
+
+				/*
+				修改文件名
+				*/
+				var oldpath = files['file'][0]['path'];		// 下载下来的文件名
+				var split_res = oldpath.split('/');		// 按照斜杠分隔
+				var split_len = split_res.length;
+				var file_old_name = files['file'][0]['originalFilename']		// 旧文件名
+				var file_new_name = now_id.toString() + '_' + file_old_name;		// 新的文件名：编号+旧文件名
+				var newpath = form.uploadDir + '/' + file_new_name;		// 新的文件路径
+				fs.renameSync(oldpath, newpath);
+				console.log(files);
+
+				// 插入这条信息
+				var insertobj = { "file_id" : now_id, "course" : " ", "major" : " ", "filename" : file_new_name, "intro" : " ", "path" : newpath }
+		    	dbo.collection("studydata").insertOne(insertobj, function(err, resss) {
+			        if (err) throw err;
+			        console.log("新文件信息插入成功");
+			        res.json({
+				    	code: retcode,// 0 for success, 1 for error
+				    	id: now_id
+					})
+			        db.close();				// !!!!!!!!!!!!这个写在外面就一直 "MongoError: server instance pool was destroyed"
+			    });
 			
-			return;
-		}
-		console.log(files)
-		console.log(files['file'].originalFilename);
-		console.log(files['course']);
-		
-		
-	})
-	
-	
-	
-	
+			})
+		});		
+	});	
+})
+
+router.use('/updataFileInfo', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var retcode = 1;		// 0 for success, else 1
+	var id = Number(req.body.id);
+	var title = req.body.title;
+	var major = req.body.major;
+	var course = req.body.course;
+
+	console.log("********************************* updateFileInfo *********************************");
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+	    // 根据 id 找到相关的文件
+		dbo.collection("studydata").find({"file_id":id}).toArray(function(err, ress) {
+			if (err) throw err;
+
+			if(ress.length == 0){		// 找不到对应的帖子
+				retcode = 1;
+			}
+			else{
+				retcode = 0;
+				console.log('已找到对应文件的信息');			
+
+				// 修改文件信息
+				var updateStr = {$set: {"course":course, "major":major, "intro":title}};
+			    dbo.collection("studydata").updateOne({"file_id": id}, updateStr, function(err, res) {
+			        if (err) throw err;
+			        console.log("文件信息更新成功");
+			        db.close();
+			    });
+
+			}
+
+			res.json({
+		    	code: retcode,// 0 for success, 1 for error
+			    id: id
+			})
+		});		
+
+	});
+
 })
 
 module.exports = router
