@@ -129,6 +129,19 @@ receive: {
 }
 
 
+// name: /getFileListByKeys
+
+send: {
+    major: '',
+    course: ''
+}
+receive: {
+    fileList: [],
+    code: 0
+}
+
+
+
 // // name: /getFileByID
 // send: {
 //     fileid: '',

@@ -103,7 +103,7 @@
                         <div class="fluid inline fields">
                             <div class="fluid inline field">
                                 <label>专业</label>
-                                <div class="ui float search selection dropdown" id="majorDropdown" :onchange="selectMajor">
+                                <div class="ui float search selection dropdown" id="majorDropdown">
                                     <!-- <option value=""></option> -->
                                     <input type="text" v-model="selectedMajor">
                                     
@@ -121,14 +121,14 @@
                                     <i class="dropdown icon"></i>
                                     <div class="default text">搜索课程名</div>
                                     <div class="menu">
-                                        <div class="item" data-value="gs">高数</div>
-                                        <div class="item" data-value="sf">算分</div>
+                                        <div class="item" v-for="course in courseList" :key="course" >{{course}}</div>
+                                        
                                     </div>
                                 </div>
                             </div>
                             <div class="right floated inline field">
                                 <!-- <label></label> -->
-                                <div class="ui right floated button" @click="tmp">筛选</div>
+                                <div class="ui right floated button" @click="getFileListByKeys">筛选</div>
                             </div>
                         
                         </div>
@@ -137,7 +137,7 @@
             </div>
             <div class="ui fluid card" style="cursor: pointer;" v-for="it in fileList" :key="it.id" @click="showFile(it.id)">
                 <div class="content">
-                    <h3>{{it.title}}</h3>
+                    <div style="float: left;"><h3>{{it.title}}</h3> </div>
                     <div class="ui right floated positive button" @click="downloadFile">下载</div>
                 </div>
             </div>
@@ -210,6 +210,7 @@
                 dataList: [],
                 fileList: [],
                 majorList: [],
+                courseList: [],
                 selectedMajor: '',
                 mainList: "",
                 singlePost: "display: none;",
@@ -353,15 +354,40 @@
             downloadFile: function () {
                 
             },
-            tmp: function() {
+            getFileListByKeys: function() {
 
-                console.log($('#majorDropdown').dropdown('get text'));
+                // console.log($('#majorDropdown').dropdown('get text'));
+                var self = this
+                this.$ajax({
+                    url: 'api/getFileListBykeys',
+                    method: 'post',
+                    data: {
+                        major: $('#majorDropdown').dropdown('get text'),
+                        course: $('#courseDropdown').dropdown('get text')
+                    },
+                    timeout: 3000
+                }).then(function(response) {
+                    
+                })
             },
             selectMajor: function() {
                 var self = this
+                console.log($('#majorDropdown').dropdown('get text'));
+                
                 this.$ajax({
                     method: 'post',
-                    url: 'api/'
+                    url: 'api/getCourse',
+                    data: {
+                        major: $('#majorDropdown').dropdown('get text')
+                    },
+                    timeout: 3000
+                }).then(function(response) {
+                    if (response.data['code'] === 0) {
+                        self.courseList = [].concat(response.data['courselist'])
+                    } else {
+                        console.log('get course code error');
+                        
+                    }
                 })
             },
             activeBBS: function(){
@@ -494,7 +520,9 @@
             }
             $('.ui.dropdown.item').dropdown();
             $('#courseDropdown').dropdown();
-            $('#majorDropdown').dropdown();
+            $('#majorDropdown').dropdown({
+                onChange: this.selectMajor
+            });
 
             // this.dataList = new Array(20);
             // for (var i = 0;i < 20;++i) {
