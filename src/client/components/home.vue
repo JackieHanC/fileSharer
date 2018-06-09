@@ -100,12 +100,12 @@
             <div class="ui fluid card">
                 <div class="content">
                     <div class="ui form">
-                        <div class="inline fields">
+                        <div class="fluid inline fields">
                             <div class="eight wide field">
                                 <label>专业</label>
                                 <div class="ui search selection dropdown" id="majorDropdown">
                                     <!-- <option value=""></option> -->
-                                    <input type="hidden">
+                                    <input type="hidden" v-model="selectedMajor">
                                     
                                     <i class="dropdown icon"></i>
                                     <div class="default text">搜索专业</div>
@@ -210,6 +210,7 @@
                 dataList: [],
                 fileList: [],
                 majorList: [],
+                selectedMajor: '',
                 mainList: "",
                 singlePost: "display: none;",
                 singleFile: "display: none;",
@@ -451,6 +452,10 @@
                 $('#username').popup('destroy')
                 
             },
+            selectedMajor: function () {
+                console.log(this.selectedMajor);
+                
+            }
             // password: function() {
             //     if (this.password.length < 8) {
             //         this.passwordError = "密码长度应不小于8"
@@ -525,7 +530,9 @@
                 timeout: 3000
             }).then(function(response) {
                 if (response.data['code'] === 0) {
-                    self.majorList = [].concat(response.data['majorList'])
+                    self.majorList = [].concat(response.data['majorlist'])
+                    console.log('major list length ' + self.majorList.length);
+                    
                 } else {
                     console.log('getMajor code error');
                     
