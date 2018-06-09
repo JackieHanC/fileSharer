@@ -97,6 +97,44 @@
             <showingFile :value="theFile" :getUsername="username"></showingFile>
         </div>
         <div class="eight wide column" :style="fileListStyle">
+            <div class="ui fluid card">
+                <div class="content">
+                    <div class="ui form">
+                        <div class="inline fields">
+                            <div class="eight wide field">
+                                <label>专业</label>
+                                <div class="ui search selection dropdown" id="majorDropdown">
+                                    <!-- <option value=""></option> -->
+                                    <input type="hidden">
+                                    
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">搜索专业</div>
+                                    <div class="menu">
+                                        <div class="item" v-for="major in majorList" :key="major">{{major}}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="eight wide field">
+                                <label>课程</label>
+                                <div class="ui search selection dropdown" id="courseDropdown">
+                                    <input type="hidden" name="kc">
+                                    <i class="dropdown icon"></i>
+                                    <div class="default text">搜索课程名</div>
+                                    <div class="menu">
+                                        <div class="item" data-value="gs">高数</div>
+                                        <div class="item" data-value="sf">算分</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="two wide field">
+                                <!-- <label></label> -->
+                                <div class="ui button">筛选</div>
+                            </div>
+                        
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="ui fluid card" style="cursor: pointer;" v-for="it in fileList" :key="it.id" @click="showFile(it.id)">
                 <div class="content">
                     <h3>{{it.title}}</h3>
@@ -171,6 +209,7 @@
                 searchinfo: "",
                 dataList: [],
                 fileList: [],
+                majorList: [],
                 mainList: "",
                 singlePost: "display: none;",
                 singleFile: "display: none;",
@@ -438,7 +477,8 @@
                 this.loginInputs = '';
             }
             $('.ui.dropdown.item').dropdown();
-
+            $('#courseDropdown').dropdown();
+            $('#majorDropdown').dropdown();
 
             // this.dataList = new Array(20);
             // for (var i = 0;i < 20;++i) {
@@ -474,6 +514,22 @@
                 timeout: 3000
             }).then(function(response) {
                 self.fileList = [].concat(response.data['fileList'])
+            })
+
+            this.$ajax({
+                url: 'api/getMajor',
+                method: 'post',
+                data: {
+
+                },
+                timeout: 3000
+            }).then(function(response) {
+                if (response.data['code'] === 0) {
+                    self.majorList = [].concat(response.data['majorList'])
+                } else {
+                    console.log('getMajor code error');
+                    
+                }
             })
             
         },
