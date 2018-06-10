@@ -325,7 +325,20 @@
                 })
             },
             downloadFile: function () {
-                window.open('/a.txt');
+                // window.open('/a.txt');
+                var self = this
+                this.$ajax({
+                    method: 'post',
+                    url: 'getUrlByID',
+                    data: {
+                        id: ''
+                    },
+                    timeout: 3000
+                }).then(function(response) {
+                    if (response.data['code'] === 0) {
+                        window.open(response.data['url'])
+                    }
+                })
             },
             newFile: function() {
                 $('#newFileModal').modal('show');
