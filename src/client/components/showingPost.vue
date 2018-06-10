@@ -53,6 +53,9 @@ export default {
             //     popup: $('#insertComment'),
             //     on : 'click'
             // })
+            if (this.commentContent === '') {
+                return;
+            }
             $('#commentBtn').popup('hide')
             var self = this
             this.$ajax({

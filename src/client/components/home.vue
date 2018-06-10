@@ -185,7 +185,17 @@
             
             <div class="actions">
                 <div class="ui black deny button">取消</div>
-                <div class="ui right floated positive button" @click="upNewPost">确认</div>
+                <div class="ui right floated primary button" @click="upNewPost">确认</div>
+            </div>
+
+            <div :style="newPostError">
+                <div class="ui divider"> </div>
+                <div class="ui negative message">
+                    <div class="ui header">
+                        {{postErrorMsg}}
+                    </div>
+                </div>
+            
             </div>
         </div>
     </div>
@@ -219,9 +229,11 @@
                 courseList: [],
                 uploadBtnStyle: "ui disabled fluid primary button",
                 selectedMajor: '',
+                newPostError: "display: none;",
                 mainList: "",
                 singlePost: "display: none;",
                 fileListStyle: "display: none",
+                postErrorMsg: '',
                 thePost: {
                     title: "",
                     content: ""
@@ -438,6 +450,18 @@
 
             },
             upNewPost: function () {
+                if (this.theNewPost.title === "") {
+                    this.postErrorMsg = "标题不能为空"
+                    this.newPostError = ""
+                    return;
+                }
+                if (this.theNewPost.content === "") {
+                    this.postErrorMsg = "内容不能为空"
+                    this.newPostError = ""
+                    return;
+                }
+                this.newPostError = 'display: none;'
+
                 var self = this
                 var newID;
                 this.$ajax({
@@ -459,8 +483,10 @@
                         })
                         
                         console.log('newID is ' + newID);
+
                         self.theNewPost.title = '';
                         self.theNewPost.content = '';   
+                        $('#newPostModal').modal('hide');
                     }
                 })                
             },

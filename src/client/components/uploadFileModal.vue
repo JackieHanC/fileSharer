@@ -1,40 +1,51 @@
 <template>
-    <div class="ui form">
-        <div class="field">
-            <label>标题</label>
-            <input type="text" class="ui input" v-model="title" placeholder="请输入标题">
-        </div>
-        <div class="two fields">
+    <div>
+        <div class="ui form">
             <div class="field">
-                <label>专业</label>
-                <div class="ui float search selection dropdown" id="majorDropdown2">
-                    <input type="hidden">
-                    <i class="dropdown icon"></i>
-                    <div class="default text">专业</div>
-                    <div class="menu">
-                        <div class="item" v-for="major in majorList" :key="major">{{major}}</div>
+                <label>标题</label>
+                <input type="text" class="ui input" v-model="title" placeholder="请输入标题">
+            </div>
+            <div class="two fields">
+                <div class="field">
+                    <label>专业</label>
+                    <div class="ui float search selection dropdown" id="majorDropdown2">
+                        <input type="hidden">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">专业</div>
+                        <div class="menu">
+                            <div class="item" v-for="major in majorList" :key="major">{{major}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>课程</label>
+                    <div class="ui float search selection dropdown" id="courseDropdown2">
+                        <input type="hidden">
+                        
+                        <i class="dropdown icon"></i>
+                        <div class="default text">课程</div>
+                        <div class="menu">
+                            <div class="item" v-for="course in courseList" :key="course">{{course}}</div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="field">
-                <label>课程</label>
-                <div class="ui float search selection dropdown" id="courseDropdown2">
-                    <input type="hidden">
-                    
-                    <i class="dropdown icon"></i>
-                    <div class="default text">课程</div>
-                    <div class="menu">
-                        <div class="item" v-for="course in courseList" :key="course">{{course}}</div>
-                    </div>
-                </div>
+                <label>文件</label>
+                <input type="file" id="inputFile" @change="uploadFile">
+            </div>
+            <div class="field">
+                <div :class="btnStyle" @click="updateFileInfo">上传</div>
             </div>
         </div>
-        <div class="field">
-            <label>文件</label>
-            <input type="file" id="inputFile" @change="uploadFile">
-        </div>
-        <div class="field">
-            <div :class="btnStyle" @click="updateFileInfo">上传</div>
+        <div :style="showError">
+            <div class="ui divider"></div>
+            <div class="ui negative message">
+                <i class="close icon"></i>
+                <div class="header">
+                    {{errorMessage}}
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -49,6 +60,8 @@ export default {
             courseList: [],
             title: '',
             fileID: '',
+            errorMessage: '',
+            showError: 'display: none;'
             // buttonStyle: "ui disabled fluid primary button"
         }
     },
@@ -73,8 +86,14 @@ export default {
             })
         },
         uploadFile: function () {
+            // if (document.getElementById('inputFile').value)
+            // console.log(document.getElementById('inputFile').value);
+            if (document.getElementById('inputFile').value === "") {
+                console.log('value empty');
+                return;
+            }
             var f = document.getElementById('inputFile').files[0]
-            // console.log(f);
+            console.log(f);
             var formdata = new FormData();
             formdata.append('file', f);
             // formdata.append('title', this.title)
@@ -105,6 +124,27 @@ export default {
             })
         },
         updateFileInfo: function () {
+            if (this.title === '') {
+                this.errorMessage = "标题不能为空";
+                this.showError = '';
+                return;
+            }
+            console.log($('#majorDropdown2').dropdown('get text'));
+            
+            if ($('#majorDropdown2').dropdown('get text') === '专业') {
+                this.errorMessage = '专业不能为空'
+                this.showError = '';
+                return;
+            }
+
+            if ($('#courseDropdown2').dropdown('get text') === '课程') {
+                this.errorMessage = '课程不能为空'
+                this.showError = '';
+                return;
+            }
+
+            this.showError = 'display: none;'
+            
             var self = this
             this.$ajax({
                 method: 'post',
