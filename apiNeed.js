@@ -174,6 +174,15 @@ receive: {
     url: ''
 }
 
+//name: updateLikes
+send: {
+    id: 0
+}
+
+receive: {
+    code: 0
+}
+
 // // name: /getFileByID
 // send: {
 //     fileid: '',
