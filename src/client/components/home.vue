@@ -147,9 +147,11 @@
             </div>
         </div>
 
-        <div class="ui modal" id="newFileModal">
+        <div class="ui modal" id="newFileModal" :hidden="setDisabled">
             <div class="content">
-                <uploadFileModal v-on:close="closeUpload"></uploadFileModal>
+                <uploadFileModal :btn-style="uploadBtnStyle" 
+                    v-on:changestyle="changestyle" 
+                    v-on:close="closeUpload"></uploadFileModal>
             </div>
         </div>
 
@@ -215,6 +217,7 @@
                 fileList: [],
                 majorList: [],
                 courseList: [],
+                uploadBtnStyle: "ui disabled fluid primary button",
                 selectedMajor: '',
                 mainList: "",
                 singlePost: "display: none;",
@@ -466,6 +469,8 @@
             },
             closeUpload: function() {
                 $('#newFileModal').modal('hide');
+                // uploadBtnStyle = "ui disabled fluid primary button";
+                this.changestyle("ui disabled fluid primary button")
                 var self = this;
                 this.$ajax({
                     url: 'api/getFileList',
@@ -477,6 +482,14 @@
                 }).then(function(response) {
                     self.fileList = [].concat(response.data['fileList'])
                 })
+            },
+            changestyle: function(style) {
+                this.uploadBtnStyle = style;
+            },
+            setDisabled: function() {
+                console.log('on hidden');
+                
+                this.changestyle("ui disabled fluid primary button")
             }
         },
         watch:{
@@ -532,6 +545,9 @@
             $('#majorDropdown').dropdown({
                 onChange: this.selectMajor
             });
+            $('#newFileModal').modal({
+                onHidden: this.setDisabled
+            })
 
             // this.dataList = new Array(20);
             // for (var i = 0;i < 20;++i) {

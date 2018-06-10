@@ -34,7 +34,7 @@
             <input type="file" id="inputFile" @change="uploadFile">
         </div>
         <div class="field">
-            <div class="ui fluid primary button" @click="updateFileInfo">上传</div>
+            <div :class="btnStyle" @click="updateFileInfo">上传</div>
         </div>
     </div>
 </template>
@@ -42,12 +42,14 @@
 <script>
 
 export default {
+    props: ['btnStyle'],
     data() {
         return {
             majorList: [],
             courseList: [],
             title: '',
-            fileID: ''
+            fileID: '',
+            // buttonStyle: "ui disabled fluid primary button"
         }
     },
     methods: {
@@ -95,7 +97,10 @@ export default {
             }).then(function(response) {
                 if (response.data['code'] === 0) {
                     console.log('upload file code 0');
+                    console.log('upload file id' + response.data['id']);
+                    
                     self.fileID = response.data['id']
+                    self.$emit("changestyle", "ui fluid primary button");
                 }
             })
         },
