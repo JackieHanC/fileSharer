@@ -316,18 +316,27 @@ router.use('/newPost', function (req, res) {
 	        myid = ress[0]['bbs_id']+1;
 	        insertobj = {"name": username, "bbs_id":Number(myid), "like":0, "date": datestring, "title":title, "content":content, "comment":[]};
 
-			res.json({
-				newPostID: myid,
-				code: 0
-			})
+	        if(title.length==0 || content.length==0){
+				res.json({
+					newPostID: myid,
+					code: 1
+				})
+	        }
+	        else{
+				res.json({
+					newPostID: myid,
+					code: 0
+				})
+
 	        // res['newPostID'] = myid;
 
-	    	dbo.collection("bbs").insertOne(insertobj, function(err, resss) {
-		        if (err) throw err;
-		        console.log("insertobj");
-		        console.log("新BBS插入成功");
-		        db.close();				// !!!!!!!!!!!!这个写在外面就一直 "MongoError: server instance pool was destroyed"
-		    });
+		    	dbo.collection("bbs").insertOne(insertobj, function(err, resss) {
+			        if (err) throw err;
+			        console.log("insertobj");
+			        console.log("新BBS插入成功");
+			        db.close();				// !!!!!!!!!!!!这个写在外面就一直 "MongoError: server instance pool was destroyed"
+			    });
+	    	}
 		});
 	});
 
@@ -412,7 +421,7 @@ router.use('/uploadComment', function (req, res) {
 			var returnobj = {}
 			var retcode = 1;
 
-			if(ress.length == 0){		// 找不到对应的帖子
+			if(ress.length==0 || content.length==0){		// 找不到对应的帖子
 				retcode = 1;
 			}
 			else{
@@ -526,7 +535,9 @@ router.use('/getFileList', function (req, res) {
 	        if (err) throw err;
 	        for(var i=0;i<ress.length;++i){
 	            var obj={"id":ress[i]["file_id"],"title":ress[i]["intro"], code: 0};
-	            data.push(obj);
+	            if(ress[i]["major"].length!=0 && ress[i]["intro"].length!=0 && ress[i]["course"].length!=0){
+	            	data.push(obj);
+	        	}
 	        }
 
 	        console.log(data);
@@ -626,7 +637,9 @@ router.use('/getFileListByKeys', function (req, res) {
 	            retcode = 0;
 	            for(var i=0;i<ress.length;i++){
 	            	var insertobj = {"id":ress[i]["file_id"], "title": ress[i]["intro"], code: 0}
-	                retarr.push(insertobj);
+	            	if(ress[i]["major"].length!=0 && ress[i]["intro"].length!=0 && ress[i]["course"].length!=0){		// 只显示非空文件
+	                	retarr.push(insertobj);
+	            	}
 	            }
 	            console.log("已查到课程的文件列表：");
 	            console.log(retarr);
@@ -651,7 +664,7 @@ router.use('/getFileListByKeys', function (req, res) {
 router.use('/uploadFile', function (req, res) {
 	// console.log(req.Payload);
 	// console.log(req['Content-Type']);
-	console.log("********************************* getFileListByKeys *********************************");
+	console.log("********************************* uploadFile *********************************");
 
 	var MongoClient = require('mongodb').MongoClient;
 	var url = "mongodb://localhost:27017/filesharer";
@@ -697,7 +710,7 @@ router.use('/uploadFile', function (req, res) {
 				console.log(files);
 
 				// 插入这条信息
-				var insertobj = { "file_id" : now_id, "course" : " ", "major" : " ", "filename" : file_new_name, "intro" : " ", "path" : newpath }
+				var insertobj = { "file_id" : now_id, "course" : "", "major" : "", "filename" : file_new_name, "intro" : "", "path" : newpath }
 		    	dbo.collection("studydata").insertOne(insertobj, function(err, resss) {
 			        if (err) throw err;
 			        console.log("新文件信息插入成功");
@@ -738,7 +751,7 @@ router.use('/updataFileInfo', function (req, res) {
 		dbo.collection("studydata").find({"file_id":id}).toArray(function(err, ress) {
 			if (err) throw err;
 
-			if(ress.length == 0){		// 找不到对应的帖子
+			if(ress.length==0 || title.length==0 || major.length==0 || course.length==0){		// 找不到对应的帖子
 				retcode = 1;
 			}
 			else{
