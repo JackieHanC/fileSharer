@@ -25,6 +25,7 @@ app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'api/uploads')))      // 添加静态文件存放地址
 
 const compiler = webpack(config)
 //webpack 中间件

@@ -133,7 +133,7 @@ MongoClient.connect(url, {useNewUrlParser: true}, function (err, db) {
 
     create_account(db, dbo, is_delete);
     create_bbs(db, dbo, is_delete);
-    //create_studydata(db, dbo, is_delete);
+    create_studydata(db, dbo, is_delete);
     create_majorcourse(db, dbo, is_delete);
 
     db.close();
