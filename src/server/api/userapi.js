@@ -809,4 +809,54 @@ router.use('/getUrlByID', function (req, res) {
 
 })
 
+/*
+修改点赞数
+*/
+router.use('/updateLikes', function (req, res) {
+	var MongoClient = require('mongodb').MongoClient;
+	var url = "mongodb://localhost:27017/filesharer";
+
+	var postid = Number(req.body.id);
+
+	console.log("********************************* updateLikes *********************************");
+	console.log("GET a postID : " + postid);
+
+	// 连接数据库
+	MongoClient.connect(url, function (err, db) {
+	    if (err) throw err;
+	    console.log('数据库已连接');
+	    var dbo = db.db("filesharer");
+
+	    // 根据postid找到相关的帖子
+		dbo.collection("bbs").find({bbs_id:postid}).toArray(function(err, ress) {
+			if (err) throw err;
+			var retcode = 1;
+
+			if(ress.length == 0){		// 找不到对应的帖子
+				retcode = 1;
+			}
+			else{
+				console.log('已找到对应帖子');		
+
+				// 更新帖子
+				var now_like = ress[0]["like"] + 1;
+				var updateStr = {$set: { "like" : now_like }};
+			    dbo.collection("bbs").updateOne({"bbs_id": postid}, updateStr, function(err, res) {
+			        if (err) throw err;
+			        console.log("点赞信息更新成功");
+			        db.close();
+			    });
+
+				retcode = 0;
+			}
+
+			res.json({
+		    	code: retcode// 0 for success, 1 for error
+			})
+		});		
+
+	});
+
+})
+
 module.exports = router
