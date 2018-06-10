@@ -136,7 +136,7 @@
             <div class="ui fluid card" v-for="it in fileList" :key="it.id">
                 <div class="content">
                     <div style="float: left;"><h3>{{it.title}}</h3> </div>
-                    <div class="ui right floated positive button" @click="downloadFile">下载</div>
+                    <div class="ui right floated positive button" @click="downloadFile(it.id)">下载</div>
                 </div>
             </div>
         </div>
@@ -324,18 +324,20 @@
 
                 })
             },
-            downloadFile: function () {
+            downloadFile: function (ID) {
                 // window.open('/a.txt');
                 var self = this
                 this.$ajax({
                     method: 'post',
-                    url: 'getUrlByID',
+                    url: 'api/getUrlByID',
                     data: {
-                        id: ''
+                        id: ID
                     },
                     timeout: 3000
                 }).then(function(response) {
                     if (response.data['code'] === 0) {
+                        console.log(response.data['url']);
+                        
                         window.open(response.data['url'])
                     }
                 })
@@ -464,6 +466,17 @@
             },
             closeUpload: function() {
                 $('#newFileModal').modal('hide');
+                var self = this;
+                this.$ajax({
+                    url: 'api/getFileList',
+                    method: 'post',
+                    data: {
+                        idBegin: 0
+                    },
+                    timeout: 3000
+                }).then(function(response) {
+                    self.fileList = [].concat(response.data['fileList'])
+                })
             }
         },
         watch:{
