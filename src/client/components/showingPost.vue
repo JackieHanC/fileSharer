@@ -80,19 +80,24 @@ export default {
             // this.value.like += 1
             this.$ajax({
                 method: 'post',
-                url: 'updateLikes',
+                url: 'api/updateLikes',
                 data: {
                     id: this.value.id
                 }
             }).then(function(response) {
                 if (response.data['code'] === 0) {
                     self.likeIcon = 'ui red like icon'
-                    value.like += 1
+                    self.value.like += 1
                 } else {
                     console.log('update likes code error');
                     
                 }
             })
+        }
+    },
+    watch: {
+        "value.id" : function () {
+            this.likeIcon = "ui like icon"
         }
     },
     mounted() {
