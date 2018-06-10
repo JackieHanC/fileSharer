@@ -453,7 +453,6 @@ router.use('/getMajor', function (req, res) {
 	var url = "mongodb://localhost:27017/filesharer";
 
 	var return_value;		// 0 for success, else 1
-
 	console.log("********************************* getMajor *********************************");
 
 	var insertobj={};		// 要插入的表项
@@ -793,12 +792,13 @@ router.use('/getUrlByID', function (req, res) {
 			}
 			else{
 				retcode = 0;
-				console.log('已找到对应文件的信息');			
+				console.log('已找到对应文件的信息');	
+				var split_res = ress[0]['path'].split('/');		
 
 				// 修改文件信息
 				res.json({
 			    	code: retcode,// 0 for success, 1 for error
-				    url: ress[0]['path']
+				    url: split_res[split_res.length-1]
 				})
 			    db.close();
 
